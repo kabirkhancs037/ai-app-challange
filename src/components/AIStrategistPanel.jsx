@@ -79,7 +79,7 @@ export default function AIStrategistPanel({ selectedArchetype }) {
         {
           role: "assistant",
           content:
-            "I could not reach the AI server. Please confirm the backend is running on port 5050 and your OpenAI API key is set in `.env`.",
+            "The AI service is temporarily unavailable or busy. Please try again in a moment.",
         },
       ]);
     } finally {
