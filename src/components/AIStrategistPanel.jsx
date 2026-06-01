@@ -47,7 +47,7 @@ export default function AIStrategistPanel({ selectedArchetype }) {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5050/api/strategist-chat", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/strategist-chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
