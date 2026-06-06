@@ -5,9 +5,12 @@ import MiniBars from "../components/MiniBars";
 import AIStrategistPanel from "../components/AIStrategistPanel";
 import { archetypes, demographics, behaviorBars } from "../data/mockData";
 import { Share2 } from "lucide-react";
+import AIInsightCard from "../components/AIInsightCard";
+import { useNavigate } from "react-router-dom";
 
 export default function BehavioralMap() {
   const savedId = localStorage.getItem("selectedArchetypeId");
+  const navigate = useNavigate();
 
   const [selectedArchetype, setSelectedArchetype] = useState(
     archetypes.find((a) => a.id === savedId) || archetypes[0]
@@ -47,19 +50,55 @@ export default function BehavioralMap() {
       </header>
 
       <div className="flex gap-3 mb-5">
-        {["All States", "All Demographics", "All Incomes", "All Ethnicities"].map(
-          (x) => (
-            <select
-              key={x}
-              className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
-            >
-              <option>{x}</option>
-              <option>Hispanic Millennials</option>
-            </select>
-          )
-        )}
+        <select
+          className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
+          defaultValue="All States"
+        >
+          <option>All States</option>
+          <option>East Coast</option>
+          <option>West Coast</option>
+          <option>Midwest</option>
+          <option>South</option>
+          <option>Central</option>
+        </select>
 
-        <button className="card px-5 text-sm">Reset Filters</button>
+        <select
+          className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
+          defaultValue="All Demographics"
+        >
+          <option>All Demographics</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+
+        <select
+          className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
+          defaultValue="All Incomes"
+        >
+          <option>All Incomes</option>
+          <option>0-50K</option>
+          <option>50-100K</option>
+          <option>100-150K</option>
+          <option>150-200K</option>
+          <option>Above 200K</option>
+        </select>
+
+        <select
+          className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
+          defaultValue="All Ethnicities"
+        >
+          <option>All Ethnicities</option>
+          <option>White</option>
+          <option>Asian</option>
+          <option>Hispanic</option>
+          <option>African American</option>
+          <option>Other</option>
+        </select>
+
+        <button className="bg-[#000] border border-border rounded-lg px-4 py-3 text-sm">
+          Reset Filters
+        </button>
       </div>
 
       <div className="grid grid-cols-[1fr_360px] gap-5">
@@ -143,6 +182,8 @@ export default function BehavioralMap() {
             </div>
           </div>
 
+           <AIInsightCard selectedArchetype={selectedArchetype} />
+
           <div className="card p-5">
             <h3 className="font-bold text-slate-300 mb-4">
               TOP DEMOGRAPHICS
@@ -157,6 +198,14 @@ export default function BehavioralMap() {
             <h3 className="font-bold text-slate-300 mb-4">TOP FEATURES</h3>
             <MiniBars data={behaviorBars} color="bg-green" />
           </div>
+
+          <button
+            onClick={() => navigate(`/archetype/${selectedArchetype.id}`)}
+            className="mt-5 w-full rounded-xl border border-blue/50 px-4 py-3 text-blue font-bold hover:bg-blue/10 transition"
+          >
+            View Full Archetype Profile →
+          </button>
+
         </aside>
 
         <AIStrategistPanel selectedArchetype={selectedArchetype} />

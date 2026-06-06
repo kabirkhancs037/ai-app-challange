@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Bot,
   Send,
@@ -18,6 +18,26 @@ const suggestedPrompts = [
 export default function AIStrategistPanel({ selectedArchetype }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+
+  const [position, setPosition] = useState(() => {
+  const saved = localStorage.getItem("aiStrategistPosition");
+
+  return saved
+        ? JSON.parse(saved)
+        : {
+            x: window.innerWidth - 270,
+            y: window.innerHeight - 120,
+        };
+    });
+
+    const isLeftSide = typeof window !== "undefined" && position.x < window.innerWidth / 2;
+
+    const dragRef = useRef({
+    dragging: false,
+    moved: false,
+    offsetX: 0,
+    offsetY: 0,
+    });
 
   const [messages, setMessages] = useState([
     {
@@ -88,16 +108,61 @@ export default function AIStrategistPanel({ selectedArchetype }) {
     }
   }
 
-  if (!isOpen) {
+   function handleMouseDown(e) {
+    dragRef.current.dragging = true;
+    dragRef.current.moved = false;
+    dragRef.current.offsetX = e.clientX - position.x;
+    dragRef.current.offsetY = e.clientY - position.y;
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    }
+
+    function handleMouseMove(e) {
+    if (!dragRef.current.dragging) return;
+
+    dragRef.current.moved = true;
+
+    const newX = Math.max(12, Math.min(window.innerWidth - 260, e.clientX - dragRef.current.offsetX));
+    const newY = Math.max(12, Math.min(window.innerHeight - 90, e.clientY - dragRef.current.offsetY));
+
+    setPosition({
+        x: newX,
+        y: newY,
+    });
+    }
+
+    function handleMouseUp() {
+    dragRef.current.dragging = false;
+
+    localStorage.setItem(
+        "aiStrategistPosition",
+        JSON.stringify(position)
+    );
+
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+    }
+
+    function handleFloatingButtonClick() {
+    if (dragRef.current.moved) return;
+    setIsOpen(true);
+    }
+
+    if (!isOpen) {
     return (
-      <button
-        onClick={() => {
-          setIsOpen(true);
-          setIsMinimized(false);
+        <button
+        onMouseDown={handleMouseDown}
+        onClick={handleFloatingButtonClick}
+        style={{
+            position: "fixed",
+            left: position.x,
+            top: position.y,
+            zIndex: 9999,
         }}
-        className="fixed bottom-6 right-6 z-[9999] flex items-center gap-3 px-5 py-4 rounded-2xl bg-purple hover:bg-fuchsia-600 shadow-2xl text-white font-bold"
-      >
-        <Bot size={20} />
+        className="flex items-center gap-3 px-6 py-3 rounded-xl bg-purple text-white font-black text-sm shadow-[0_0_35px_rgba(139,63,246,.55)] cursor-move select-none"
+        >
+        <Bot size={18} />
         AI Strategist
       </button>
     );
@@ -105,10 +170,14 @@ export default function AIStrategistPanel({ selectedArchetype }) {
 
   return (
     <section
-      className={`fixed right-6 bottom-6 z-[9999] card shadow-2xl transition-all duration-300 overflow-hidden ${
-        isMinimized ? "w-[420px] h-[74px]" : "w-[420px] h-[700px]"
-      }`}
-    >
+        className={`fixed bottom-6 z-[9999] card shadow-2xl transition-all duration-300 overflow-hidden ${
+            isMinimized ? "w-[420px] h-[74px]" : "w-[420px] h-[700px]"
+        }`}
+        style={{
+            left: isLeftSide ? 24 : "auto",
+            right: isLeftSide ? "auto" : 24,
+        }}
+        >
       <div className="p-4 border-b border-border flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-purple flex items-center justify-center">

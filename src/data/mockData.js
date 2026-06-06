@@ -293,3 +293,49 @@ export const issueAffinity = [
   ["Gun Rights", 38],
   ["Abortion", 34],
 ];
+
+export const ageComposition = [
+  ["18-24", 6],
+  ["25-34", 16],
+  ["35-44", 26],
+  ["45-54", 26],
+  ["55-64", 17],
+  ["65+", 7],
+];
+
+export const ethnicityComposition = [
+  ["White", 62, "#8b3ff6"],
+  ["Hispanic", 19, "#3498db"],
+  ["Asian", 9, "#38bdf8"],
+  ["African American", 8, "#f59e0b"],
+  ["Other", 2, "#14b8a6"],
+];
+
+export const incomeComposition = [
+  ["$0 - $49.9K", 8],
+  ["$50K - $99.9K", 26],
+  ["$100K - $149K", 31],
+  ["$150K - $249K", 24],
+  ["$250K+", 9],
+];
+
+export const heritageComposition = [
+  ["Mexican American", 8],
+  ["Indian", 3],
+  ["Chinese", 2],
+  ["Dominican", 2],
+  ["Other", 4],
+];
+
+export const behavioralDNA = [
+  ["Retail", "Costco, Target, Home Depot", 78, "🏬"],
+  ["Mobility", "SUVs, Minivans", 64, "🏠"],
+  ["Home & DIY", "", 52, "🛠️"],
+  ["Streaming", "Disney+, Hulu, Netflix", 49, "📺"],
+  ["Groceries", "Natural / Organic", 33, "🛒"],
+  ["Dining Out", "", 12, "🍽️"],
+  ["Luxury Fashion", "", -24, "💎"],
+  ["Crypto / Web3 Content", "", -41, "₿"],
+  ["Nightlife / Clubs", "", -47, "🎭"],
+  ["Esports / Gaming", "", -53, "🎮"],
+];

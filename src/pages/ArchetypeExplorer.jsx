@@ -61,20 +61,20 @@ console.log("Explorer loaded archetype:", item.id);
         <StatCard label="Growth '24-'26" value="+18%" color="text-green" />
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
-        <Panel title="1 WHO THEY ARE" subtitle="Demographic Composition">
+      <div className="grid grid-cols-4 gap-5 items-start">
+        <Panel title="1 WHO THEY ARE" subtitle="Demographic Composition" className="min-h-[360px]">
           <MiniBars data={demographics.map(d => [d.label, d.value])} />
         </Panel>
 
-        <Panel title="2 HOW THEY LIVE" subtitle="Behavioral DNA">
+        <Panel title="2 HOW THEY LIVE" subtitle="Behavioral DNA" className="min-h-[360px]">
           <MiniBars data={behaviorBars} color="bg-green" />
         </Panel>
 
-        <Panel title="3 WHERE THEY LIVE" subtitle="Geographic Concentration" className="col-span-2">
+        <Panel title="3 WHERE THEY LIVE" subtitle="Geographic Concentration" className="col-span-2 min-h-[520px]">
           <USAMapCard />
         </Panel>
 
-        <Panel title="4 POLITICAL PROFILE" subtitle="Inferred from Behavior">
+        <Panel title="4 POLITICAL PROFILE" subtitle="Inferred from Behavior" className="col-span-2">
           <div className="grid grid-cols-2 gap-5">
             <div>
               <h3 className="text-sm font-bold mb-3">POLITICAL COMPASS</h3>
@@ -120,7 +120,7 @@ console.log("Explorer loaded archetype:", item.id);
 
 function Panel({ title, subtitle, children, className = "" }) {
   return (
-    <section className={`card p-5 min-h-[320px] ${className}`}>
+    <section className={`card p-6 ${className || "min-h-[360px]"}`}>
       <h2 className="font-black text-lg">{title}</h2>
       <p className="text-xs text-slate-400 mb-5">{subtitle}</p>
       {children}

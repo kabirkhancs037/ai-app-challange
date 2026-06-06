@@ -55,7 +55,7 @@ function findHotspot(name) {
 export default function USAMapCard() {
   return (
     <div className="grid grid-cols-[1fr_285px] gap-5 h-full">
-      <div className="relative min-h-[330px] flex flex-col justify-center">
+      <div className="relative min-h-[330px] flex flex-col justify-start pt-2">
         <ComposableMap
           projection="geoAlbersUsa"
           projectionConfig={{
@@ -63,7 +63,7 @@ export default function USAMapCard() {
           }}
           width={760}
           height={430}
-          className="w-full h-[360px]"
+          className="w-full h-[300px]"
         >
           <defs>
             <filter id="geoGlow">
