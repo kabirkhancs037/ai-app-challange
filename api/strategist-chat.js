@@ -13,11 +13,42 @@ function buildPrompt({ message, selectedArchetype, chatHistory = [] }) {
     ? `
 Selected archetype:
 Name: ${selectedArchetype.name}
-Population: ${selectedArchetype.population}
-Political lean: ${selectedArchetype.lean || "Unknown"}
-Persuadability: ${selectedArchetype.persuadability || "Unknown"}
-Income: ${selectedArchetype.income || "Unknown"}
-Description: ${selectedArchetype.description || "No description available"}
+Population: ${selectedArchetype.profile?.population || selectedArchetype.population}
+Political lean: ${selectedArchetype.profile?.politicalLean || selectedArchetype.lean || "Unknown"}
+Median income: ${selectedArchetype.profile?.medianIncome || selectedArchetype.income || "Unknown"}
+Persuadability: ${selectedArchetype.profile?.persuadability || selectedArchetype.persuadability || "Unknown"}
+Median age: ${selectedArchetype.profile?.medianAge || "Unknown"}
+Homeownership: ${selectedArchetype.profile?.homeownershipRate || "Unknown"}%
+
+Age distribution:
+${JSON.stringify(selectedArchetype.profile?.ageDistribution || [])}
+
+Ethnicity mix:
+${JSON.stringify(selectedArchetype.profile?.ethnicityMix || [])}
+
+Income distribution:
+${JSON.stringify(selectedArchetype.profile?.incomeDistribution || [])}
+
+Behavioral DNA:
+${JSON.stringify(selectedArchetype.profile?.behavioralDNA || {})}
+
+Economic profile:
+${JSON.stringify(selectedArchetype.profile?.economicProfile || [])}
+
+Political profile:
+${JSON.stringify(selectedArchetype.profile?.politicalProfile || [])}
+
+Geography:
+${JSON.stringify(selectedArchetype.profile?.geography || [])}
+
+Urbanicity:
+${JSON.stringify(selectedArchetype.profile?.urbanicity || [])}
+
+Persuadability topics:
+${JSON.stringify(selectedArchetype.profile?.persuadabilityTopics || [])}
+
+Coalition overlap:
+${JSON.stringify(selectedArchetype.profile?.coalitionOverlap || [])}
 `
     : "No archetype selected.";
 

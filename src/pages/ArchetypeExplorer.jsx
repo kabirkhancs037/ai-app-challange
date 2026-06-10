@@ -1,11 +1,19 @@
 import { Link, useParams } from "react-router-dom";
-import { archetypes, behaviorBars, demographics, issueAffinity } from "../data/mockData";
-import MiniBars from "../components/MiniBars";
-import StatCard from "../components/StatCard";
-import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from "recharts";
+import { archetypes } from "../data/mockData";
+import { getArchetypeProfileById } from "../data/archetypeProfiles";
+import {
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  Radar,
+  ResponsiveContainer,
+} from "recharts";
 import USAMapCard from "../components/USAMapCard";
 import AIStrategistPanel from "../components/AIStrategistPanel";
 import PoliticalCompass from "../components/PoliticalCompass";
+import WhoTheyAreCard from "../components/WhoTheyAreCard";
+import HowTheyLiveCard from "../components/HowTheyLiveCard";
+import CoalitionOverlapMap from "../components/CoalitionOverlapMap";
 
 export default function ArchetypeExplorer() {
   const { id } = useParams();
@@ -14,106 +22,289 @@ export default function ArchetypeExplorer() {
   const archetypeId = id || savedId || "suburban-family-first";
 
   const item =
-    archetypes.find((a) => a.id === archetypeId) ||
-    archetypes[0];
+    archetypes.find((a) => a.id === archetypeId) || archetypes[0];
+
+  const profile = getArchetypeProfileById(item.id);
+
+  if (!profile) {
+    return (
+      <div className="card p-8">
+        <h1 className="text-2xl font-black">Archetype profile not found</h1>
+        <p className="text-slate-400 mt-2">
+          Please go back to Behavioral Map and select another archetype.
+        </p>
+      </div>
+    );
+  }
 
   localStorage.setItem("selectedArchetypeId", item.id);
 
-console.log("Explorer loaded archetype:", item.id);
-
   const radar = [
-    { name: "Ideology", value: 60 },
-    { name: "Media", value: 82 },
-    { name: "Lifestyle", value: 80 },
-    { name: "Spending", value: 72 },
-    { name: "Mobility", value: 64 },
+    {
+      name: "Persuadability",
+      value:
+        profile.persuadability === "Very High"
+          ? 90
+          : profile.persuadability === "High"
+          ? 75
+          : profile.persuadability === "Medium"
+          ? 55
+          : 35,
+    },
+    {
+      name: "Economics",
+      value: Math.min(
+        100,
+        Math.round(
+          profile.politicalProfile
+            .filter(
+              ([issue]) =>
+                issue.toLowerCase().includes("inflation") ||
+                issue.toLowerCase().includes("cost") ||
+                issue.toLowerCase().includes("jobs") ||
+                issue.toLowerCase().includes("economic")
+            )
+            .reduce((sum, [, value]) => sum + value, 0) / 2
+        )
+      ),
+    },
+    {
+      name: "Culture",
+      value: Math.min(
+        100,
+        Math.round(
+          profile.politicalProfile
+            .filter(
+              ([issue]) =>
+                issue.toLowerCase().includes("crime") ||
+                issue.toLowerCase().includes("gun") ||
+                issue.toLowerCase().includes("immigration") ||
+                issue.toLowerCase().includes("religious")
+            )
+            .reduce((sum, [, value]) => sum + value, 0) / 2
+        )
+      ),
+    },
+    {
+      name: "Lifestyle",
+      value: Math.min(
+        100,
+        Math.round(
+          profile.behavioralDNA.overIndex
+            .slice(0, 4)
+            .reduce((sum, [, value]) => sum + value, 0) / 4
+        )
+      ),
+    },
+    {
+      name: "Community",
+      value: Math.min(100, Math.round(profile.homeownershipRate)),
+    },
   ];
 
   return (
     <div>
       <div className="flex justify-between mb-5">
-        <Link to="/map" className="card px-5 py-2 text-sm">← Back to Behavioral Political Map</Link>
+        <Link to="/map" className="card px-5 py-2 text-sm">
+          ← Back to Behavioral Political Map
+        </Link>
+
         <div className="flex gap-3">
-          <Link to="/compare" className="card px-5 py-2 text-sm">Compare Archetypes</Link>
+          <Link to="/compare" className="card px-5 py-2 text-sm">
+            Compare Archetypes
+          </Link>
           <button className="card px-5 py-2 text-sm">Download Profile</button>
         </div>
       </div>
 
       <section className="grid grid-cols-[220px_1fr] gap-5 mb-5">
         <div className="rounded-xl overflow-hidden bg-gradient-to-br from-orange to-blue h-36" />
+
         <div>
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-purple flex items-center justify-center text-2xl">👪</div>
+            <div className="w-14 h-14 rounded-full bg-purple flex items-center justify-center text-2xl">
+              👪
+            </div>
+
             <div>
               <h1 className="text-4xl font-black uppercase">{item.name}</h1>
-              <span className="bg-purple/60 px-3 py-1 rounded text-xs">{item.lean}</span>
+
+              <span className="bg-purple/60 px-3 py-1 rounded text-xs">
+                {item.lean}
+              </span>
             </div>
           </div>
+
           <p className="text-slate-300 max-w-xl mt-4">{item.description}</p>
         </div>
       </section>
 
-      <div className="card p-5 flex justify-between mb-5">
-        <StatCard label="Population" value={item.population} sub={`${item.percent || "8.5%"} of Adults`} />
-        <StatCard label="Median Income" value={item.income || "$74K"} />
-        <StatCard label="Political Lean" value={item.lean} />
-        <StatCard label="Persuadability" value={item.persuadability} color="text-green" />
-        <StatCard label="Growth '24-'26" value="+18%" color="text-green" />
+      <div className="card grid grid-cols-5 gap-0 overflow-hidden mb-5">
+        <StatBlock label="Population" value={profile.population} sub="Adult Population" />
+        <StatBlock label="Median Income" value={profile.medianIncome} />
+        <StatBlock label="Political Lean" value={profile.politicalLean} />
+        <StatBlock label="Persuadability" value={profile.persuadability} green />
+        <div className="p-6">
+          <div className="text-xs text-slate-400 uppercase">Homeownership</div>
+          <div className="text-2xl font-black mt-2 text-green">
+            {profile.homeownershipRate}%
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-5 items-start">
-        <Panel title="1 WHO THEY ARE" subtitle="Demographic Composition" className="min-h-[360px]">
-          <MiniBars data={demographics.map(d => [d.label, d.value])} />
+      <div className="grid grid-cols-4 gap-5 items-stretch">
+        <Panel
+          title="1 WHO THEY ARE"
+          subtitle="Demographic Composition"
+          className="col-span-2 h-[560px] overflow-hidden"
+        >
+          <WhoTheyAreCard profile={profile} />
         </Panel>
 
-        <Panel title="2 HOW THEY LIVE" subtitle="Behavioral DNA" className="min-h-[360px]">
-          <MiniBars data={behaviorBars} color="bg-green" />
+        <Panel
+          title="2 HOW THEY LIVE"
+          subtitle="Behavioral DNA"
+          className="h-[560px] overflow-hidden"
+        >
+          <div className="h-[445px] overflow-y-auto pr-2">
+            <HowTheyLiveCard profile={profile} />
+          </div>
         </Panel>
 
-        <Panel title="3 WHERE THEY LIVE" subtitle="Geographic Concentration" className="col-span-2 min-h-[520px]">
-          <USAMapCard />
+        <Panel
+          title="3 WHERE THEY LIVE"
+          subtitle="Geographic Concentration"
+          className="h-[560px] overflow-hidden"
+        >
+          <USAMapCard profile={profile} />
         </Panel>
 
-        <Panel title="4 POLITICAL PROFILE" subtitle="Inferred from Behavior" className="col-span-2">
+        <Panel
+          title="4 POLITICAL PROFILE"
+          subtitle="Inferred from Behavior"
+          className="col-span-2 h-full overflow-hidden"
+        >
           <div className="grid grid-cols-2 gap-5">
             <div>
               <h3 className="text-sm font-bold mb-3">POLITICAL COMPASS</h3>
               <PoliticalCompass
-                liberalConservative={item.compass?.liberalConservative || 0}
-                progressiveTraditional={item.compass?.progressiveTraditional || 0}
+                liberalConservative={profile.compass?.liberalConservative ?? 0}
+                progressiveTraditional={
+                  profile.compass?.progressiveTraditional ?? 0
+                }
               />
             </div>
 
             <div>
               <h3 className="text-sm font-bold mb-3">
-                ISSUE AFFINITY <span className="text-slate-400">(Probability)</span>
+                ISSUE AFFINITY{" "}
+                <span className="text-slate-400">(Probability)</span>
               </h3>
-              <MiniBars data={issueAffinity} />
+
+              <div className="space-y-4">
+                {profile.politicalProfile.map(([issue, value]) => (
+                  <div
+                    key={issue}
+                    className="grid grid-cols-[1fr_140px_50px] items-center gap-4"
+                  >
+                    <div className="text-slate-200 text-sm">{issue}</div>
+
+                    <div className="h-2.5 bg-[#13243a] rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-purple"
+                        style={{ width: `${value}%` }}
+                      />
+                    </div>
+
+                    <div className="text-right text-slate-200 font-bold text-sm">
+                      {value}%
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </Panel>
 
-        <Panel title="5 PERSUADABILITY" subtitle="Why They Can Move">
-          <div className="h-64">
-            <ResponsiveContainer>
-              <RadarChart data={radar}>
-                <PolarGrid stroke="#243954" />
-                <PolarAngleAxis dataKey="name" tick={{ fill: "#9aa8bd", fontSize: 11 }} />
-                <Radar dataKey="value" fill="#8b3ff6" stroke="#b46aff" fillOpacity={0.5} />
-              </RadarChart>
-            </ResponsiveContainer>
+        <Panel
+          title="5 PERSUADABILITY"
+          subtitle="Why They Can Move"
+          className="h-full overflow-hidden"
+        >
+          <div className="h-full overflow-y-auto pr-2 coalition-scrollbar">
+            <div className="h-[260px] -mt-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart
+                  data={radar}
+                  margin={{ top: 20, right: 45, bottom: 20, left: 45 }}
+                >
+                  <PolarGrid stroke="#243954" />
+
+                  <PolarAngleAxis
+                    dataKey="name"
+                    tick={{
+                      fill: "#9aa8bd",
+                      fontSize: 9,
+                      fontWeight: 600,
+                    }}
+                  />
+
+                  <Radar
+                    dataKey="value"
+                    fill="#8b3ff6"
+                    stroke="#b46aff"
+                    fillOpacity={0.5}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="mt-2 rounded-2xl border border-border bg-[#071322]/70 p-4">
+              <h3 className="text-xs font-black text-slate-300 mb-3">
+                MOST PERSUADABLE ON
+              </h3>
+
+              <div className="flex flex-wrap gap-2">
+                {(profile.persuadabilityTopics || []).slice(0, 5).map((topic) => (
+                  <span
+                    key={topic}
+                    className="rounded-lg bg-purple/30 border border-purple/40 px-3 py-2 text-xs font-semibold text-slate-100"
+                  >
+                    {topic}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </Panel>
 
-        <Panel title="6 COALITION OVERLAP" subtitle="Who They Align With">
-          <div className="h-64 flex items-center justify-center">
-            <div className="w-36 h-36 rounded-full bg-purple glow-purple flex items-center justify-center text-center font-bold">
-              {item.name}
-            </div>
-          </div>
+        <Panel
+          title="6 COALITION OVERLAP"
+          subtitle="Who They Align With"
+          className="h-full overflow-hidden"
+        >
+          <CoalitionOverlapMap profile={profile} />
         </Panel>
       </div>
-      <AIStrategistPanel selectedArchetype={item} />
+
+      <AIStrategistPanel
+        selectedArchetype={{
+          ...item,
+          profile,
+        }}
+      />
+    </div>
+  );
+}
+
+function StatBlock({ label, value, sub, green = false }) {
+  return (
+    <div className="p-6 border-r border-border">
+      <div className="text-xs text-slate-400 uppercase">{label}</div>
+      <div className={`text-2xl font-black mt-2 ${green ? "text-green" : ""}`}>
+        {value}
+      </div>
+      {sub && <div className="text-xs text-slate-500 mt-1">{sub}</div>}
     </div>
   );
 }

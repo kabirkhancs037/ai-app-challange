@@ -3,10 +3,13 @@ import ClusterMap from "../components/ClusterMap";
 import StatCard from "../components/StatCard";
 import MiniBars from "../components/MiniBars";
 import AIStrategistPanel from "../components/AIStrategistPanel";
-import { archetypes, demographics, behaviorBars } from "../data/mockData";
+import { archetypes } from "../data/mockData";
 import { Share2 } from "lucide-react";
 import AIInsightCard from "../components/AIInsightCard";
 import { useNavigate } from "react-router-dom";
+import { getArchetypeProfileById } from "../data/archetypeProfiles";
+import CompareArchetypeModal from "../components/CompareArchetypeModal";
+
 
 export default function BehavioralMap() {
   const savedId = localStorage.getItem("selectedArchetypeId");
@@ -15,6 +18,41 @@ export default function BehavioralMap() {
   const [selectedArchetype, setSelectedArchetype] = useState(
     archetypes.find((a) => a.id === savedId) || archetypes[0]
   );
+
+  const [showCompareModal, setShowCompareModal] = useState(false);
+
+  const [filters, setFilters] = useState({
+    region: "All States",
+    demographic: "All Demographics",
+    income: "All Incomes",
+    ethnicity: "All Ethnicities",
+  });
+
+  const selectedProfile = getArchetypeProfileById(selectedArchetype.id);
+
+  const filteredArchetypes = archetypes.filter((archetype) => {
+    const profile = getArchetypeProfileById(archetype.id);
+
+    if (!profile?.filters) return true;
+
+    const regionMatch =
+      filters.region === "All States" ||
+      profile.filters.regions.includes(filters.region);
+
+    const demographicMatch =
+      filters.demographic === "All Demographics" ||
+      profile.filters.demographics.includes(filters.demographic);
+
+    const incomeMatch =
+      filters.income === "All Incomes" ||
+      profile.filters.incomes.includes(filters.income);
+
+    const ethnicityMatch =
+      filters.ethnicity === "All Ethnicities" ||
+      profile.filters.ethnicities.includes(filters.ethnicity);
+
+    return regionMatch && demographicMatch && incomeMatch && ethnicityMatch;
+  });
 
     function handleSelectArchetype(archetype) {
       setSelectedArchetype(archetype);
@@ -40,9 +78,12 @@ export default function BehavioralMap() {
         </div>
 
         <div className="flex gap-3">
-          <button className="card px-5 py-2 text-sm">
-            2026 MIDTERM OUTLOOK
-          </button>
+          <button
+              onClick={() => setShowCompareModal(true)}
+              className="card px-5 py-2 text-sm"
+            >
+              Compare Prototype
+            </button>
           <button className="card px-5 py-2 text-sm flex gap-2 items-center">
             <Share2 size={16} /> Share
           </button>
@@ -51,54 +92,88 @@ export default function BehavioralMap() {
 
       <div className="flex gap-3 mb-5">
         <select
-          className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
-          defaultValue="All States"
-        >
-          <option>All States</option>
-          <option>East Coast</option>
-          <option>West Coast</option>
-          <option>Midwest</option>
-          <option>South</option>
-          <option>Central</option>
+            className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
+            value={filters.region}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                region: e.target.value,
+              }))
+            }
+          >
+            <option value="All States">All States</option>
+            <option value="East Coast">East Coast</option>
+            <option value="West Coast">West Coast</option>
+            <option value="Midwest">Midwest</option>
+            <option value="South">South</option>
+            <option value="Central">Central</option>
         </select>
 
         <select
-          className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
-          defaultValue="All Demographics"
-        >
-          <option>All Demographics</option>
-          <option>Male</option>
-          <option>Female</option>
-          <option>Other</option>
+            className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
+            value={filters.demographic}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                demographic: e.target.value,
+              }))
+            }
+          >
+             <option value="All Demographics">All Demographics</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
         </select>
 
         <select
-          className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
-          defaultValue="All Incomes"
-        >
-          <option>All Incomes</option>
-          <option>0-50K</option>
-          <option>50-100K</option>
-          <option>100-150K</option>
-          <option>150-200K</option>
-          <option>Above 200K</option>
+            className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
+            value={filters.income}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                income: e.target.value,
+              }))
+            }
+          >
+            <option value="All Incomes">All Incomes</option>
+            <option value="0-50K">0-50K</option>
+            <option value="50-100K">50-100K</option>
+            <option value="100-150K">100-150K</option>
+            <option value="150-200K">150-200K</option>
+            <option value="Above 200K">Above 200K</option>
         </select>
 
         <select
-          className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
-          defaultValue="All Ethnicities"
-        >
-          <option>All Ethnicities</option>
-          <option>White</option>
-          <option>Asian</option>
-          <option>Hispanic</option>
-          <option>African American</option>
-          <option>Other</option>
+            className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
+            value={filters.ethnicity}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                ethnicity: e.target.value,
+              }))
+            }
+          >
+            <option value="All Ethnicities">All Ethnicities</option>
+            <option value="White">White</option>
+            <option value="Asian">Asian</option>
+            <option value="Hispanic">Hispanic</option>
+            <option value="African American">African American</option>
+            <option value="Other">Other</option>
         </select>
 
-        <button className="bg-[#000] border border-border rounded-lg px-4 py-3 text-sm">
-          Reset Filters
-        </button>
+        <button
+            onClick={() =>
+              setFilters({
+                region: "All States",
+                demographic: "All Demographics",
+                income: "All Incomes",
+                ethnicity: "All Ethnicities",
+              })
+            }
+            className="bg-[#071322] border border-border rounded-lg px-4 py-3 text-sm"
+          >
+            Reset Filters
+          </button>
       </div>
 
       <div className="grid grid-cols-[1fr_360px] gap-5">
@@ -118,7 +193,10 @@ export default function BehavioralMap() {
             />
           </div>
 
-         <ClusterMap onSelectArchetype={handleSelectArchetype} />
+         <ClusterMap
+            filteredArchetypes={filteredArchetypes}
+            onSelectArchetype={handleSelectArchetype}
+          />
         </div>
 
         <aside className="space-y-4">
@@ -145,7 +223,7 @@ export default function BehavioralMap() {
                   {selectedArchetype.name}
                 </div>
                 <span className="bg-purple/60 px-3 py-1 rounded text-xs">
-                  {selectedArchetype.lean || "Competitive"}
+                  {selectedProfile?.politicalLean || selectedArchetype.lean || "Competitive"}
                 </span>
               </div>
             </div>
@@ -154,7 +232,7 @@ export default function BehavioralMap() {
               <div className="flex justify-between gap-4">
                 <span className="text-slate-400">Population</span>
                 <span>
-                  {selectedArchetype.population}{" "}
+                  {selectedProfile?.population || selectedArchetype.population}
                   {selectedArchetype.percent
                     ? `(${selectedArchetype.percent})`
                     : ""}
@@ -164,20 +242,20 @@ export default function BehavioralMap() {
               <div className="flex justify-between gap-4">
                 <span className="text-slate-400">Political Lean</span>
                 <span className="text-fuchsia-400">
-                  {selectedArchetype.lean || "Competitive"}
+                  {selectedProfile?.politicalLean || selectedArchetype.lean || "Competitive"}
                 </span>
               </div>
 
               <div className="flex justify-between gap-4">
                 <span className="text-slate-400">Persuadability</span>
                 <span className="text-green">
-                  {selectedArchetype.persuadability || "High"}
+                  {selectedProfile?.persuadability || selectedArchetype.persuadability || "High"}
                 </span>
               </div>
 
               <div className="flex justify-between gap-4">
                 <span className="text-slate-400">Median Income</span>
-                <span>{selectedArchetype.income || "$82K"}</span>
+                <span>{selectedProfile?.medianIncome || selectedArchetype.income || "$82K"}</span>
               </div>
             </div>
           </div>
@@ -189,14 +267,17 @@ export default function BehavioralMap() {
               TOP DEMOGRAPHICS
             </h3>
             <MiniBars
-              data={demographics.map((d) => [d.label, d.value])}
+              data={selectedProfile?.ageDistribution || []}
               color="bg-blue"
             />
           </div>
 
           <div className="card p-5">
             <h3 className="font-bold text-slate-300 mb-4">TOP FEATURES</h3>
-            <MiniBars data={behaviorBars} color="bg-green" />
+            <MiniBars
+              data={selectedProfile?.behavioralDNA?.overIndex || []}
+              color="bg-green"
+            />
           </div>
 
           <button
@@ -208,7 +289,20 @@ export default function BehavioralMap() {
 
         </aside>
 
-        <AIStrategistPanel selectedArchetype={selectedArchetype} />
+        <AIStrategistPanel
+            selectedArchetype={{
+              ...selectedArchetype,
+              profile: selectedProfile,
+            }}
+          />
+
+          <CompareArchetypeModal
+            open={showCompareModal}
+            onClose={() => setShowCompareModal(false)}
+            onCompare={(selectedIds) => {
+              navigate(`/compare?left=${selectedIds[0]}&right=${selectedIds[1]}`);
+            }}
+          />
       </div>
     </div>
   );

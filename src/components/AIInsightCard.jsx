@@ -4,12 +4,14 @@ import { Sparkles, RefreshCw } from "lucide-react";
 export default function AIInsightCard({ selectedArchetype }) {
   const [insight, setInsight] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   async function generateInsight() {
     if (!selectedArchetype) return;
 
     setLoading(true);
     setInsight("");
+    setHasLoaded(true);
 
     try {
       const apiBaseUrl = import.meta.env.VITE_API_URL || "";
@@ -47,7 +49,7 @@ Use only the provided dashboard/mock data.
 
       setInsight(data.reply);
     } catch (error) {
-        console.log(error);
+      console.log(error);
       setInsight(
         "AI insight is temporarily unavailable. Please try again in a moment."
       );
@@ -57,12 +59,13 @@ Use only the provided dashboard/mock data.
   }
 
 useEffect(() => {
-  const timer = setTimeout(() => {
-    generateInsight();
-  }, 0);
+  const resetInsight = () => {
+    setInsight("");
+    setLoading(false);
+    setHasLoaded(false);
+  };
 
-  return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  resetInsight();
 }, [selectedArchetype?.id]);
 
   return (
@@ -75,21 +78,31 @@ useEffect(() => {
           </div>
 
           <p className="text-sm text-slate-400 mt-1">
-            Auto-generated strategy summary
+            Click to generate a strategy summary
           </p>
         </div>
 
-        <button
-          onClick={generateInsight}
-          disabled={loading}
-          className="w-9 h-9 rounded-lg border border-border flex items-center justify-center hover:bg-[#10233b] disabled:opacity-50"
-          title="Regenerate insight"
-        >
-          <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
-        </button>
+        {hasLoaded && (
+          <button
+            onClick={generateInsight}
+            disabled={loading}
+            className="w-9 h-9 rounded-lg border border-border flex items-center justify-center hover:bg-[#10233b] disabled:opacity-50"
+            title="Regenerate insight"
+          >
+            <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
+          </button>
+        )}
       </div>
 
-      {loading ? (
+      {!hasLoaded ? (
+        <button
+          onClick={generateInsight}
+          disabled={!selectedArchetype || loading}
+          className="w-full rounded-xl border border-purple/50 px-4 py-3 text-sm font-bold text-purple hover:bg-purple/10 transition disabled:opacity-50"
+        >
+          Load AI Insight
+        </button>
+      ) : loading ? (
         <div className="space-y-3">
           <div className="h-3 bg-[#142239] rounded w-5/6 animate-pulse" />
           <div className="h-3 bg-[#142239] rounded w-full animate-pulse" />

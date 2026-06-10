@@ -259,6 +259,46 @@ export const archetypes = [
       progressiveTraditional: -0.75,
     }
   },
+  {
+  id: "senior-security-voters",
+  name: "Senior Security Voters",
+  mapLabel: "Senior Security\nVoters",
+  population: "20.3M",
+  percent: "7.9%",
+  lean: "Lean Republican",
+  persuadability: "Medium-Low",
+  color: "#FF8A3D",
+  x: 72,
+  y: 78,
+  income: "$76K",
+  labelSide: "right",
+  description:
+    "Older voters focused on Social Security, healthcare costs, prescription drugs, retirement stability, and public safety.",
+  compass: {
+    liberalConservative: 0.55,
+    progressiveTraditional: 0.65,
+  },
+},
+{
+  id: "urban-progressives",
+  name: "Urban Progressives",
+  mapLabel: "Urban\nProgressives",
+  population: "25.8M",
+  percent: "10.0%",
+  lean: "Strong Democrat",
+  persuadability: "Medium",
+  color: "#4C7DFF",
+  x: 39,
+  y: 31,
+  income: "$124K",
+  labelSide: "left",
+  description:
+    "Dense-city progressive voters shaped by public transit, housing affordability, social issues, climate, and urban culture.",
+  compass: {
+    liberalConservative: -0.8,
+    progressiveTraditional: -0.82,
+  },
+},
 ];
 
 export const demographics = [

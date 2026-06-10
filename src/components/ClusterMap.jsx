@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useRef, useCallback, useState, useMemo } from "react";
 import { archetypes } from "../data/mockData";
 
 const connections = [
@@ -40,14 +40,23 @@ function hexToRgb(hex) {
   ];
 }
 
-function getNode(id) {
-  return archetypes.find((a) => a.id === id);
+function getNode(id, list) {
+  return list.find((a) => a.id === id);
 }
 
-export default function ClusterMap({ onSelectArchetype }) {
+export default function ClusterMap({ filteredArchetypes, onSelectArchetype }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const [hoveredId, setHoveredId] = useState(null);
+
+  const filteredIds = useMemo(() => {
+    return new Set((filteredArchetypes?.length ? filteredArchetypes : archetypes).map((a) => a.id));
+  }, [filteredArchetypes]);
+
+  const isFilteredIn = useCallback(
+    (id) => filteredIds.has(id),
+    [filteredIds]
+  );
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -56,6 +65,7 @@ export default function ClusterMap({ onSelectArchetype }) {
 
     const W = container.offsetWidth;
     const H = container.offsetHeight;
+    const minDim = Math.min(W, H);
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
     canvas.width = W * dpr;
@@ -69,14 +79,7 @@ export default function ClusterMap({ onSelectArchetype }) {
     ctx.fillStyle = "#020916";
     ctx.fillRect(0, 0, W, H);
 
-    const ambient = ctx.createRadialGradient(
-      W * 0.5,
-      H * 0.45,
-      0,
-      W * 0.5,
-      H * 0.45,
-      W * 0.66
-    );
+    const ambient = ctx.createRadialGradient(W * 0.5, H * 0.45, 0, W * 0.5, H * 0.45, W * 0.66);
     ambient.addColorStop(0, "rgba(24,55,105,0.7)");
     ambient.addColorStop(0.58, "rgba(10,24,50,0.34)");
     ambient.addColorStop(1, "rgba(2,9,22,0)");
@@ -84,23 +87,20 @@ export default function ClusterMap({ onSelectArchetype }) {
     ctx.fillRect(0, 0, W, H);
 
     connections.forEach(([fid, tid]) => {
-      const a = getNode(fid);
-      const b = getNode(tid);
+      const a = getNode(fid, archetypes);
+      const b = getNode(tid, archetypes);
       if (!a || !b) return;
 
-      const ax = (a.x / 100) * W;
-      const ay = (a.y / 100) * H;
-      const bx = (b.x / 100) * W;
-      const by = (b.y / 100) * H;
+      const activeConnection = isFilteredIn(fid) && isFilteredIn(tid);
       const [r, g, bl] = hexToRgb(a.color);
 
       ctx.save();
-      ctx.strokeStyle = `rgba(${r},${g},${bl},0.42)`;
-      ctx.lineWidth = 0.75;
+      ctx.strokeStyle = `rgba(${r},${g},${bl},${activeConnection ? 0.42 : 0.08})`;
+      ctx.lineWidth = activeConnection ? 0.75 : 0.5;
       ctx.setLineDash([3, 6]);
       ctx.beginPath();
-      ctx.moveTo(ax, ay);
-      ctx.lineTo(bx, by);
+      ctx.moveTo((a.x / 100) * W, (a.y / 100) * H);
+      ctx.lineTo((b.x / 100) * W, (b.y / 100) * H);
       ctx.stroke();
       ctx.restore();
     });
@@ -112,17 +112,15 @@ export default function ClusterMap({ onSelectArchetype }) {
 
       for (let i = 0; i < zone.count; i++) {
         const angle = ((i * 137.508 + zi * 19) % 360) * (Math.PI / 180);
-        const radius = Math.sqrt(i / zone.count) * W * zone.spread;
-        const px = cx + Math.cos(angle) * radius + Math.sin(i * 1.91 + zi) * W * 0.008;
-        const py = cy + Math.sin(angle) * radius + Math.cos(i * 2.31 + zi) * W * 0.008;
+        const radius = Math.sqrt(i / zone.count) * minDim * zone.spread;
+        const px = cx + Math.cos(angle) * radius + Math.sin(i * 1.91 + zi) * minDim * 0.008;
+        const py = cy + Math.sin(angle) * radius + Math.cos(i * 2.31 + zi) * minDim * 0.008;
 
         if (px < 0 || px > W || py < 0 || py > H) continue;
 
-        const size = i % 30 === 0 ? 1.8 : i % 9 === 0 ? 1.25 : 0.8;
-
         ctx.beginPath();
-        ctx.arc(px, py, size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${r},${g},${b},0.42)`;
+        ctx.arc(px, py, i % 30 === 0 ? 1.8 : i % 9 === 0 ? 1.25 : 0.8, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${r},${g},${b},0.28)`;
         ctx.fill();
       }
     });
@@ -132,6 +130,8 @@ export default function ClusterMap({ onSelectArchetype }) {
       const cy = (a.y / 100) * H;
       const [r, g, b] = hexToRgb(a.color);
       const active = hoveredId === a.id;
+      const filteredIn = isFilteredIn(a.id);
+      const dim = filteredIn ? 1 : 0.18;
 
       const count =
         a.id === "suburban-family-first"
@@ -142,18 +142,18 @@ export default function ClusterMap({ onSelectArchetype }) {
           ? 320
           : 260;
 
-      const spreadR = W * 0.075;
+      const spreadR = minDim * 0.075;
 
       for (let i = 0; i < count; i++) {
         const angle = ((i * 137.508) % 360) * (Math.PI / 180);
         const radius = Math.sqrt(i / count) * spreadR;
-        const px = cx + Math.cos(angle) * radius + Math.sin(i * 1.7 + ci) * W * 0.008;
-        const py = cy + Math.sin(angle) * radius + Math.cos(i * 2.1 + ci) * W * 0.008;
+        const px = cx + Math.cos(angle) * radius + Math.sin(i * 1.7 + ci) * minDim * 0.008;
+        const py = cy + Math.sin(angle) * radius + Math.cos(i * 2.1 + ci) * minDim * 0.008;
 
         if (px < 0 || px > W || py < 0 || py > H) continue;
 
         const sz = i % 24 === 0 ? 2.15 : i % 8 === 0 ? 1.45 : 0.9;
-        const op = active ? 0.95 : i % 24 === 0 ? 0.88 : 0.62;
+        const op = (active ? 0.95 : i % 24 === 0 ? 0.88 : 0.62) * dim;
 
         ctx.beginPath();
         ctx.arc(px, py, active ? sz * 1.15 : sz, 0, Math.PI * 2);
@@ -161,67 +161,61 @@ export default function ClusterMap({ onSelectArchetype }) {
         ctx.fill();
       }
 
-      const outerR = W * 0.046;
+      const outerR = minDim * 0.046;
 
       ctx.beginPath();
       ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(${r},${g},${b},${active ? 0.72 : 0.48})`;
+      ctx.strokeStyle = `rgba(${r},${g},${b},${(active ? 0.72 : 0.48) * dim})`;
       ctx.lineWidth = active ? 1.05 : 0.75;
       ctx.setLineDash([2.5, 3.5]);
       ctx.stroke();
       ctx.setLineDash([]);
 
-      const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, W * 0.037);
-      halo.addColorStop(0, `rgba(${r},${g},${b},${active ? 0.5 : 0.34})`);
+      const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, minDim * 0.037);
+      halo.addColorStop(0, `rgba(${r},${g},${b},${(active ? 0.5 : 0.34) * dim})`);
       halo.addColorStop(1, `rgba(${r},${g},${b},0)`);
       ctx.beginPath();
-      ctx.arc(cx, cy, W * 0.037, 0, Math.PI * 2);
+      ctx.arc(cx, cy, minDim * 0.037, 0, Math.PI * 2);
       ctx.fillStyle = halo;
       ctx.fill();
 
-      // Smaller node
       ctx.beginPath();
-      ctx.arc(cx, cy, W * 0.0155, 0, Math.PI * 2);
+      ctx.arc(cx, cy, minDim * 0.0155, 0, Math.PI * 2);
       ctx.fillStyle = "#030916";
       ctx.fill();
 
       ctx.beginPath();
-      ctx.arc(cx, cy, W * 0.0132, 0, Math.PI * 2);
+      ctx.arc(cx, cy, minDim * 0.0132, 0, Math.PI * 2);
       ctx.fillStyle = a.color;
-      ctx.globalAlpha = 0.28;
+      ctx.globalAlpha = 0.28 * dim;
       ctx.fill();
       ctx.globalAlpha = 1;
 
-      ctx.strokeStyle = `rgba(${r},${g},${b},0.95)`;
+      ctx.strokeStyle = `rgba(${r},${g},${b},${0.95 * dim})`;
       ctx.lineWidth = active ? 1.6 : 1.1;
       ctx.stroke();
 
-      const core = ctx.createRadialGradient(
-        cx,
-        cy,
-        0,
-        cx,
-        cy,
-        W * 0.0105
-      );
-
-      core.addColorStop(0, `rgba(${r},${g},${b},1)`);
-      core.addColorStop(0.62, `rgba(${r},${g},${b},0.9)`);
-      core.addColorStop(1, `rgba(${r},${g},${b},0.36)`);
+      const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, minDim * 0.0105);
+      core.addColorStop(0, `rgba(${r},${g},${b},${1 * dim})`);
+      core.addColorStop(0.62, `rgba(${r},${g},${b},${0.9 * dim})`);
+      core.addColorStop(1, `rgba(${r},${g},${b},${0.36 * dim})`);
 
       ctx.beginPath();
-      ctx.arc(cx, cy, W * 0.0095, 0, Math.PI * 2);
+      ctx.arc(cx, cy, minDim * 0.0095, 0, Math.PI * 2);
       ctx.fillStyle = core;
-      ctx.fill(); 
+      ctx.fill();
     });
-  }, [hoveredId]);
+  }, [hoveredId, isFilteredIn]);
 
   useEffect(() => {
     draw();
 
-    const observer = new ResizeObserver(() => {
-      requestAnimationFrame(draw);
-    });
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", draw);
+      return () => window.removeEventListener("resize", draw);
+    }
+
+    const observer = new ResizeObserver(() => requestAnimationFrame(draw));
 
     if (containerRef.current) observer.observe(containerRef.current);
 
@@ -236,39 +230,36 @@ export default function ClusterMap({ onSelectArchetype }) {
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
 
-    const W = rect.width;
-    const H = rect.height;
-
     return archetypes.find((a) => {
-      const nodeX = (a.x / 100) * W;
-      const nodeY = (a.y / 100) * H;
+      if (!isFilteredIn(a.id)) return false;
 
-      const distance = Math.sqrt(
-        Math.pow(mouseX - nodeX, 2) +
-        Math.pow(mouseY - nodeY, 2)
-      );
+      const nodeX = (a.x / 100) * rect.width;
+      const nodeY = (a.y / 100) * rect.height;
+      const distance = Math.hypot(mouseX - nodeX, mouseY - nodeY);
 
       return distance <= 35;
     });
   }
 
-    function handleMapClick(event) {
-      const clicked = getArchetypeAtPoint(event);
+  function selectArchetype(archetype) {
+    onSelectArchetype?.(archetype);
 
-      if (clicked) {
-        onSelectArchetype?.(clicked);
-        localStorage.setItem("selectedArchetypeId", clicked.id);
-      }
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selectedArchetypeId", archetype.id);
     }
+  }
+
+  function handleMapClick(event) {
+    const clicked = getArchetypeAtPoint(event);
+    if (clicked) selectArchetype(clicked);
+  }
 
   function handleMapMove(event) {
     const hovered = getArchetypeAtPoint(event);
-
-    setHoveredId(hovered ? hovered.id : null);
+    setHoveredId(hovered?.id || null);
 
     if (containerRef.current) {
-      containerRef.current.style.cursor =
-        hovered ? "pointer" : "default";
+      containerRef.current.style.cursor = hovered ? "pointer" : "default";
     }
   }
 
@@ -278,7 +269,10 @@ export default function ClusterMap({ onSelectArchetype }) {
         ref={containerRef}
         onClick={handleMapClick}
         onMouseMove={handleMapMove}
-        onMouseLeave={() => setHoveredId(null)}
+        onMouseLeave={() => {
+          setHoveredId(null);
+          if (containerRef.current) containerRef.current.style.cursor = "default";
+        }}
         className="relative w-full h-[680px] rounded-2xl overflow-hidden bg-[#020916] border border-border"
       >
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
@@ -287,17 +281,19 @@ export default function ClusterMap({ onSelectArchetype }) {
           const isLeft = a.labelSide === "left";
           const lines = (a.mapLabel || a.name).split("\n");
           const active = hoveredId === a.id;
+          const filteredIn = isFilteredIn(a.id);
 
           return (
             <button
               key={a.id}
-              onClick={() => {
-                onSelectArchetype?.(a);
-                localStorage.setItem("selectedArchetypeId", a.id);
+              disabled={!filteredIn}
+              onClick={(event) => {
+                event.stopPropagation();
+                selectArchetype(a);
               }}
-              onMouseEnter={() => setHoveredId(a.id)}
+              onMouseEnter={() => filteredIn && setHoveredId(a.id)}
               onMouseLeave={() => setHoveredId(null)}
-              className="absolute z-10 bg-transparent border-0 p-0 cursor-pointer"
+              className="absolute z-10 bg-transparent border-0 p-0"
               style={{
                 left: `${a.x}%`,
                 top: `${a.y}%`,
@@ -307,17 +303,18 @@ export default function ClusterMap({ onSelectArchetype }) {
                 textAlign: isLeft ? "right" : "left",
                 maxWidth: 145,
                 lineHeight: 1.2,
+                opacity: filteredIn ? 1 : 0.28,
+                cursor: filteredIn ? "pointer" : "default",
               }}
             >
               {lines.map((line) => (
                 <span
-                  key={line}
+                  key={`${a.id}-${line}`}
                   className="block"
                   style={{
                     fontSize: active ? 13 : 12,
                     fontWeight: 500,
                     color: a.color,
-                    textShadow: "none",
                   }}
                 >
                   {line}
@@ -330,7 +327,6 @@ export default function ClusterMap({ onSelectArchetype }) {
                   fontSize: active ? 13 : 12,
                   fontWeight: 600,
                   color: "rgba(220,232,255,0.95)",
-                  textShadow: "none",
                 }}
               >
                 {a.population}
@@ -341,9 +337,7 @@ export default function ClusterMap({ onSelectArchetype }) {
       </div>
 
       <div className="card p-5 w-full">
-        <div className="text-sm font-bold mb-3">
-          POLITICAL LEANING BY COHORT
-        </div>
+        <div className="text-sm font-bold mb-3">POLITICAL LEANING BY COHORT</div>
 
         <div className="flex h-10 rounded-md overflow-hidden font-bold text-sm">
           <div className="bg-blue flex-1 flex items-center justify-center">32%</div>
