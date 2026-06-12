@@ -164,11 +164,8 @@ app.post("/api/surprising-insight", async (req, res) => {
 You are a senior political data strategist.
 
 Generate ONE surprising, memorable insight about this archetype.
-
 Use only the data provided below.
 Do not invent numbers.
-Focus on something unexpected, counterintuitive, or strategically useful.
-
 Write in 1-2 sentences.
 Return only the insight text.
 
@@ -187,14 +184,9 @@ ${JSON.stringify(profile, null, 2)}
       insight = await askOllama(prompt);
     }
 
-    res.json({
-      provider: AI_PROVIDER,
-      insight,
-    });
+    res.json({ insight });
   } catch (error) {
-    console.error("Surprising insight error:");
-    console.error(error);
-
+    console.error("Surprising insight error:", error);
     res.status(500).json({
       error: error.message || "Failed to generate surprising insight.",
     });
