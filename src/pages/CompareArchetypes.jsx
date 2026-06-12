@@ -1,6 +1,13 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useMemo, useState } from "react";
-import { X } from "lucide-react";
+import {
+  X,
+  ArrowRightLeft,
+  Wallet,
+  Gauge,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import { archetypes } from "../data/mockData";
 import { getArchetypeProfileById } from "../data/archetypeProfiles";
 import MiniBars from "../components/MiniBars";
@@ -25,9 +32,9 @@ export default function CompareArchetypes() {
 
   const leftProfile = left ? getArchetypeProfileById(left.id) : null;
   const rightProfile = right ? getArchetypeProfileById(right.id) : null;
+
   const needsSelection = !left || !right;
   const modalOpen = showCompareModal || needsSelection;
-
 
   function handleCompare(ids) {
     navigate(`/compare?left=${ids[0]}&right=${ids[1]}`);
@@ -56,11 +63,15 @@ export default function CompareArchetypes() {
         <div className="flex gap-3">
           <button
             onClick={() => setShowCompareModal(true)}
-            className="card px-5 py-2 text-sm"
+            className="card px-5 py-2 text-sm flex items-center gap-2 hover:bg-[#F6FAFF]"
           >
+            <ArrowRightLeft size={16} />
             Change Archetypes
           </button>
-          <button className="card px-5 py-2 text-sm">Share</button>
+
+          <button className="card px-5 py-2 text-sm hover:bg-[#F6FAFF]">
+            Share
+          </button>
         </div>
       </div>
 
@@ -71,13 +82,17 @@ export default function CompareArchetypes() {
 
       {left && right ? (
         <>
-          <div className="grid grid-cols-[1fr_1fr_330px] gap-5">
+          <div className="grid grid-cols-[1fr_1fr_330px] gap-5 relative">
             <CompareColumn
               item={left}
               profile={leftProfile}
               color="purple"
               onRemove={() => removeArchetype("left")}
             />
+
+            <div className="absolute left-[calc(50%-185px)] top-[72px] z-20 w-12 h-12 rounded-full bg-white border border-border shadow-lg flex items-center justify-center font-black text-[#1F2937]">
+              VS
+            </div>
 
             <CompareColumn
               item={right}
@@ -88,33 +103,59 @@ export default function CompareArchetypes() {
 
             <aside className="space-y-4">
               <div className="card p-5">
-                <h3 className="font-bold mb-5">KEY TAKEAWAYS</h3>
+                <h3 className="font-black mb-5">KEY TAKEAWAYS</h3>
 
                 <Takeaway
+                  icon={<Users size={18} />}
                   color="bg-zetaBlue"
                   text={`${left.name} has a ${
                     leftProfile?.politicalLean || left.lean
-                  } profile.`}
-                />
-
-                <Takeaway
-                  color="bg-blue"
-                  text={`${right.name} has a ${
+                  } profile, while ${right.name} has a ${
                     rightProfile?.politicalLean || right.lean
                   } profile.`}
                 />
 
                 <Takeaway
-                  color="bg-green"
-                  text="Compare persuadability, income, issue priorities, and behavioral patterns side-by-side."
+                  icon={<Gauge size={18} />}
+                  color="bg-zetaPurple"
+                  text={`Persuadability differs: ${
+                    leftProfile?.persuadability || left.persuadability
+                  } vs ${
+                    rightProfile?.persuadability || right.persuadability
+                  }.`}
                 />
+
+                <Takeaway
+                  icon={<Wallet size={18} />}
+                  color="bg-zetaGreen"
+                  text={`Income comparison: ${
+                    leftProfile?.medianIncome || left.income
+                  } vs ${rightProfile?.medianIncome || right.income}.`}
+                />
+
+                <Takeaway
+                  icon={<TrendingUp size={18} />}
+                  color="bg-zetaOrange"
+                  text={`Shared priority area: ${
+                    getSharedIssue(leftProfile, rightProfile) || "Needs data"
+                  }.`}
+                />
+              </div>
+
+              <div className="card p-5">
+                <h3 className="font-black mb-4">STRATEGIC READ</h3>
+                <p className="text-sm text-[#334155] leading-relaxed">
+                  Use this comparison to identify where messaging can bridge
+                  both archetypes and where persuasion strategies should split
+                  by economics, lifestyle, and political priority.
+                </p>
               </div>
             </aside>
           </div>
 
           <div className="card p-5 mt-5 grid grid-cols-5 gap-4 text-sm">
             <div>
-              <div className="font-bold">OVERLAP SNAPSHOT</div>
+              <div className="font-black">OVERLAP SNAPSHOT</div>
               <div className="text-zetaGray">
                 Where these two archetypes intersect
               </div>
@@ -122,10 +163,12 @@ export default function CompareArchetypes() {
 
             <Metric label="Left Archetype" value={left.name} />
             <Metric label="Right Archetype" value={right.name} />
+
             <Metric
               label="Shared Priority"
               value={getSharedIssue(leftProfile, rightProfile) || "Needs data"}
             />
+
             <Metric
               label="Persuadability Gap"
               value={`${leftProfile?.persuadability || left.persuadability} vs ${
@@ -157,24 +200,28 @@ export default function CompareArchetypes() {
 
 function CompareColumn({ item, profile, color, onRemove }) {
   const barColor = color === "blue" ? "bg-blue" : "bg-zetaBlue";
+  const score = getPersuadabilityScore(profile?.persuadability || item.persuadability);
 
   return (
     <div className="space-y-4">
       <div className="card p-5 relative" style={{ borderColor: item.color }}>
         <button
           onClick={onRemove}
-          className="absolute right-4 top-4 w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-[#10233b]"
+          className="absolute right-4 top-4 w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-[#F6FAFF]"
           title="Remove archetype"
         >
           <X size={16} />
         </button>
 
         <div className="pr-10">
-          <div className="text-xs uppercase font-bold" style={{ color: item.color }}>
+          <div
+            className="text-xs uppercase font-black"
+            style={{ color: item.color }}
+          >
             Archetype
           </div>
 
-          <h2 className="text-2xl font-bold">{item.name}</h2>
+          <h2 className="text-2xl font-black">{item.name}</h2>
 
           <p className="text-sm text-zetaGray mt-1">{item.description}</p>
         </div>
@@ -188,21 +235,90 @@ function CompareColumn({ item, profile, color, onRemove }) {
       </div>
 
       <div className="card p-5">
-        <h3 className="font-bold mb-4">DEMOGRAPHICS</h3>
+        <h3 className="font-black mb-4">DEMOGRAPHICS</h3>
         <MiniBars data={profile?.ageDistribution || []} color={barColor} />
       </div>
 
       <div className="card p-5">
-        <h3 className="font-bold mb-4">POLITICAL PROFILE</h3>
+        <h3 className="font-black mb-4">POLITICAL PROFILE</h3>
         <MiniBars data={profile?.politicalProfile || []} color={barColor} />
       </div>
 
       <div className="card p-5">
-        <h3 className="font-bold mb-4">TOP BEHAVIORAL FEATURES</h3>
+        <h3 className="font-black mb-4">TOP BEHAVIORAL FEATURES</h3>
         <MiniBars data={profile?.behavioralDNA?.overIndex || []} color={barColor} />
+      </div>
+
+      <div className="card p-5">
+        <h3 className="font-black mb-4">ECONOMIC PROFILE</h3>
+
+        <div className="grid grid-cols-3 gap-3 text-sm">
+          <MiniMetric
+            label="Median Income"
+            value={profile?.medianIncome || item.income}
+          />
+          <MiniMetric
+            label="Homeownership"
+            value={`${profile?.homeownershipRate || "—"}%`}
+          />
+          <MiniMetric
+            label="Persuadability"
+            value={profile?.persuadability || item.persuadability}
+          />
+        </div>
+      </div>
+
+      <div className="card p-5">
+        <h3 className="font-black mb-4">OVERALL PERSUADABILITY</h3>
+
+        <div className="flex items-end gap-3">
+          <div
+            className={`text-5xl font-black ${
+              color === "blue" ? "text-blue" : "text-zetaBlue"
+            }`}
+          >
+            {score}
+          </div>
+
+          <div className="text-zetaGray font-bold mb-2">/100</div>
+        </div>
+
+        <div className="mt-4 h-3 rounded-full bg-[#E5E7EB] overflow-hidden">
+          <div
+            className={`h-full rounded-full ${
+              color === "blue" ? "bg-blue" : "bg-zetaBlue"
+            }`}
+            style={{ width: `${score}%` }}
+          />
+        </div>
+
+        <div className="mt-3 text-sm text-zetaGray">
+          Most persuadable on:
+        </div>
+
+        <div className="mt-2 flex flex-wrap gap-2">
+          {(profile?.persuadabilityTopics || [])
+            .slice(0, 3)
+            .map((topic) => (
+              <span
+                key={topic}
+                className="rounded-lg bg-[#F6FAFF] border border-[#C1DAFF] px-3 py-1 text-xs font-bold text-[#1F2937]"
+              >
+                {topic}
+              </span>
+            ))}
+        </div>
       </div>
     </div>
   );
+}
+
+function getPersuadabilityScore(value) {
+  if (value === "Very High") return 85;
+  if (value === "High") return 72;
+  if (value === "Medium") return 55;
+  if (value === "Low") return 35;
+  return 50;
 }
 
 function getSharedIssue(leftProfile, rightProfile) {
@@ -221,16 +337,33 @@ function getSharedIssue(leftProfile, rightProfile) {
 function Metric({ label, value }) {
   return (
     <div>
-      <div className="text-xs uppercase text-slate-500">{label}</div>
-      <div className="font-bold text-lg mt-1">{value}</div>
+      <div className="text-xs uppercase text-zetaGray font-bold">{label}</div>
+      <div className="font-black text-lg mt-1 text-[#1F2937]">{value}</div>
     </div>
   );
 }
 
-function Takeaway({ color, text }) {
+function MiniMetric({ label, value }) {
+  return (
+    <div className="rounded-xl border border-border bg-[#F6FAFF] p-3">
+      <div className="text-[11px] uppercase text-zetaGray font-bold">
+        {label}
+      </div>
+      <div className="font-black text-lg mt-1 text-[#1F2937]">
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function Takeaway({ color, text, icon }) {
   return (
     <div className="flex gap-4 mb-5 text-sm text-[#334155]">
-      <div className={`w-10 h-10 rounded-full ${color} shrink-0`} />
+      <div
+        className={`w-10 h-10 rounded-full ${color} shrink-0 flex items-center justify-center text-white`}
+      >
+        {icon}
+      </div>
       <p>{text}</p>
     </div>
   );

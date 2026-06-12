@@ -110,7 +110,7 @@ export default function ArchetypeExplorer() {
     },
   ];
 
-  async function generateSurprisingInsight() {
+async function generateSurprisingInsight() {
   if (surpriseLoading) return;
 
   setSurpriseLoading(true);
@@ -119,14 +119,26 @@ export default function ArchetypeExplorer() {
   try {
     const apiBaseUrl = import.meta.env.VITE_API_URL || "";
 
-    const res = await fetch(`${apiBaseUrl}/api/surprising-insight`, {
+    const res = await fetch(`${apiBaseUrl}/api/strategist-chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        archetype: item,
-        profile,
+        message: `
+Generate ONE surprising, memorable insight about this archetype.
+
+Use the provided archetype/profile data only.
+Do not invent numbers.
+Focus on something unexpected, counterintuitive, or strategically useful.
+Write only 1-2 sentences. 
+Search internet if needed to provide the very interesting insight.
+`,
+        selectedArchetype: {
+          ...item,
+          profile,
+        },
+        chatHistory: [],
       }),
     });
 
@@ -136,7 +148,7 @@ export default function ArchetypeExplorer() {
       throw new Error(data.error || "Failed to generate insight");
     }
 
-    setSurpriseInsight(data.insight);
+    setSurpriseInsight(data.reply);
   } catch (error) {
     console.error(error);
     setSurpriseInsight(
@@ -226,39 +238,49 @@ export default function ArchetypeExplorer() {
         </div>
       </div>
 
-      <div className="card p-5 mb-5 border-l-4 border-zetaPink bg-white">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h3 className="text-lg font-black text-[#1F2937]">
-              What Surprised Me?
-            </h3>
-            <p className="text-sm text-[#49565D] mt-1">
-              AI-generated unexpected findings using this archetype’s real profile data.
-            </p>
-          </div>
+      <div className="card mb-5 overflow-hidden border border-[#C1DAFF]">
+        <div className="bg-gradient-to-r from-zetaBlue to-zetaPurple px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-white/80 text-xs font-bold tracking-widest uppercase">
+                AI DISCOVERY
+              </div>
 
-          <button
-            onClick={generateSurprisingInsight}
-            disabled={surpriseLoading}
-            className="px-5 py-3 rounded-xl bg-zetaBlue text-white font-bold text-sm hover:bg-zetaBlueDark1 transition disabled:opacity-60"
-          >
-            {surpriseLoading
-              ? "Finding Insight..."
-              : "Show Surprising Insights"}
-          </button>
-        </div>
-
-        {surpriseInsight && (
-          <div className="mt-4 rounded-xl bg-[#F6FAFF] border border-[#C1DAFF] p-4">
-            <div className="text-xs uppercase tracking-wide text-zetaBlue font-black mb-2">
-              AI Insight
+              <h2 className="text-white text-2xl font-black mt-1">
+                What Surprised Me?
+              </h2>
             </div>
 
-            <p className="text-[#1F2937] font-semibold leading-relaxed">
-              {surpriseInsight}
-            </p>
+            <button
+              onClick={generateSurprisingInsight}
+              disabled={surpriseLoading}
+              className="bg-white text-zetaBlue font-normal px-5 py-2 rounded-xl hover:bg-zetaBlue-light-5 transition"
+            >
+              {surpriseLoading
+                ? "Analyzing..."
+                : "Surprising Insight"}
+            </button>
           </div>
-        )}
+        </div>
+
+        <div className="p-6">
+          {!surpriseInsight ? (
+            <div className="text-[#49565D] text-base">
+              Click <strong>Surprising Insight</strong> to uncover an unexpected finding
+              about this audience.
+            </div>
+          ) : (
+            <>
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-zetaBlue to-zetaPurple text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4">
+                ✨ Unexpected Finding
+              </div>
+
+              <p className="text-l leading-relaxed font-normal text-[#1F2937]">
+                {surpriseInsight}
+              </p>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-4 gap-5 items-stretch">
