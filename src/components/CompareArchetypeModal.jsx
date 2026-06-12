@@ -52,19 +52,19 @@ const [selectedIds, setSelectedIds] = useState(
       onClick={handleClose}
     >
       <div
-        className="w-full max-w-[980px] max-h-[90vh] rounded-2xl border border-border bg-[#071322] shadow-2xl overflow-hidden"
+        className="w-full max-w-[980px] max-h-[90vh] rounded-2xl border border-border bg-white shadow-2xl overflow-hidden"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="p-6 border-b border-border">
           <div className="flex items-start justify-between gap-5">
             <div className="flex gap-4">
-              <div className="w-14 h-14 rounded-full bg-purple flex items-center justify-center shadow-[0_0_24px_rgba(139,63,246,.65)]">
+              <div className="w-14 h-14 rounded-full bg-zetaBlue flex items-center justify-center shadow-[0_0_24px_rgba(139,63,246,.65)]">
                 <Scale size={26} />
               </div>
 
               <div>
                 <h2 className="text-2xl font-black">Compare Archetypes</h2>
-                <p className="text-sm text-slate-400 mt-1">
+                <p className="text-sm text-zetaGray mt-1">
                   Select up to 2 archetypes to compare side-by-side.
                 </p>
               </div>
@@ -84,7 +84,7 @@ const [selectedIds, setSelectedIds] = useState(
           <div className="relative mt-6">
             <Search
               size={18}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-zetaGray"
             />
 
             <input
@@ -107,12 +107,12 @@ const [selectedIds, setSelectedIds] = useState(
                   onClick={() => toggleArchetype(item.id)}
                   className={`relative text-left rounded-xl border p-4 min-h-[150px] transition ${
                     selected
-                      ? "border-purple bg-purple/10"
-                      : "border-border bg-[#071322]/60 hover:border-purple/60"
+                      ? "border-purple bg-zetaBlue/10"
+                      : "border-border bg-white/60 hover:border-purple/60"
                   }`}
                 >
                   {selected && (
-                    <span className="absolute right-3 top-3 w-7 h-7 rounded-full bg-purple flex items-center justify-center">
+                    <span className="absolute right-3 top-3 w-7 h-7 rounded-full bg-zetaBlue flex items-center justify-center">
                       <Check size={16} />
                     </span>
                   )}
@@ -133,11 +133,11 @@ const [selectedIds, setSelectedIds] = useState(
                     </div>
                   </div>
 
-                  <div className="mt-4 inline-block rounded bg-purple/40 px-2 py-1 text-[11px]">
+                  <div className="mt-4 inline-block rounded bg-zetaBlue/40 px-2 py-1 text-[11px]">
                     {item.lean || "Competitive"}
                   </div>
 
-                  <div className="mt-4 text-xs text-slate-400">
+                  <div className="mt-4 text-xs text-zetaGray">
                     {item.population} Adults
                   </div>
                 </button>
@@ -174,7 +174,7 @@ const [selectedIds, setSelectedIds] = useState(
           <button
             onClick={handleCompare}
             disabled={selectedIds.length !== 2}
-            className="rounded-xl bg-purple px-7 py-3 font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-purple/90"
+            className="rounded-xl bg-zetaBlue px-7 py-3 font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zetaBlue/90"
           >
             Compare Now →
           </button>

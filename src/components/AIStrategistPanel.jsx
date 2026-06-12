@@ -25,8 +25,8 @@ export default function AIStrategistPanel({ selectedArchetype }) {
   return saved
         ? JSON.parse(saved)
         : {
-            x: window.innerWidth - 270,
-            y: window.innerHeight - 120,
+            x: 0,
+            y: window.innerHeight - 56,
         };
     });
 
@@ -123,8 +123,18 @@ export default function AIStrategistPanel({ selectedArchetype }) {
 
     dragRef.current.moved = true;
 
-    const newX = Math.max(12, Math.min(window.innerWidth - 260, e.clientX - dragRef.current.offsetX));
-    const newY = Math.max(12, Math.min(window.innerHeight - 90, e.clientY - dragRef.current.offsetY));
+    const buttonWidth = 220;
+    const buttonHeight = 56;
+
+    const newX = Math.max(
+    0,
+    Math.min(window.innerWidth - buttonWidth, e.clientX - dragRef.current.offsetX)
+    );
+
+    const newY = Math.max(
+    0,
+    Math.min(window.innerHeight - buttonHeight, e.clientY - dragRef.current.offsetY)
+    );
 
     setPosition({
         x: newX,
@@ -160,7 +170,7 @@ export default function AIStrategistPanel({ selectedArchetype }) {
             top: position.y,
             zIndex: 9999,
         }}
-        className="flex items-center gap-3 px-6 py-3 rounded-xl bg-purple text-white font-black text-sm shadow-[0_0_35px_rgba(139,63,246,.55)] cursor-move select-none"
+        className="flex items-center gap-3 px-6 py-3 rounded-xl bg-zetaBlue text-white font-black text-sm shadow-[0_0_35px_rgba(139,63,246,.15)] cursor-move select-none"
         >
         <Bot size={18} />
         AI Strategist
@@ -180,13 +190,13 @@ export default function AIStrategistPanel({ selectedArchetype }) {
         >
       <div className="p-4 border-b border-border flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-purple flex items-center justify-center">
+          <div className="w-9 h-9 rounded-full bg-zetaBlue flex items-center justify-center">
             <Bot size={18} />
           </div>
 
           <div>
             <h3 className="font-bold text-sm">AI Strategist</h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-zetaGray">
               Campaign insights powered by AI
             </p>
           </div>
@@ -195,7 +205,7 @@ export default function AIStrategistPanel({ selectedArchetype }) {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsMinimized(!isMinimized)}
-            className="text-slate-400 hover:text-white"
+            className="text-zetaGray hover:text-white"
             title={isMinimized ? "Expand" : "Collapse"}
           >
             {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
@@ -203,7 +213,7 @@ export default function AIStrategistPanel({ selectedArchetype }) {
 
           <button
             onClick={() => setIsOpen(false)}
-            className="text-slate-400 hover:text-white"
+            className="text-zetaGray hover:text-white"
             title="Close"
           >
             <X size={16} />
@@ -214,12 +224,12 @@ export default function AIStrategistPanel({ selectedArchetype }) {
       {!isMinimized && (
         <div className="p-4 h-[626px] flex flex-col">
           {selectedArchetype && (
-            <div className="mb-3 rounded-lg border border-border bg-[#071322] p-3">
-              <div className="text-xs text-slate-400">Selected Archetype</div>
+            <div className="mb-3 rounded-lg border border-border bg-white p-3">
+              <div className="text-xs text-zetaGray">Selected Archetype</div>
               <div className="font-bold text-sm">
                 {selectedArchetype.name}
               </div>
-              <div className="text-xs text-slate-400 mt-1">
+              <div className="text-xs text-zetaGray mt-1">
                 {selectedArchetype.population} ·{" "}
                 {selectedArchetype.lean || "Competitive"}
               </div>
@@ -232,7 +242,7 @@ export default function AIStrategistPanel({ selectedArchetype }) {
                 key={prompt}
                 onClick={() => sendMessage(prompt)}
                 disabled={loading}
-                className="text-xs text-left rounded-lg border border-border bg-[#071322] hover:bg-[#10233b] p-2 disabled:opacity-50"
+                className="text-xs text-left rounded-lg border border-border bg-white hover:bg-[#10233b] p-2 disabled:opacity-50"
               >
                 <Sparkles size={12} className="inline mr-1" />
                 {prompt}
@@ -246,8 +256,8 @@ export default function AIStrategistPanel({ selectedArchetype }) {
                 key={index}
                 className={`rounded-lg p-3 text-sm whitespace-pre-wrap leading-relaxed ${
                   msg.role === "user"
-                    ? "bg-purple/35 ml-8"
-                    : "bg-[#071322] mr-8 border border-border"
+                    ? "bg-zetaBlue/35 ml-8"
+                    : "bg-white mr-8 border border-border"
                 }`}
               >
                 {msg.content}
@@ -255,7 +265,7 @@ export default function AIStrategistPanel({ selectedArchetype }) {
             ))}
 
             {loading && (
-              <div className="bg-[#071322] border border-border rounded-lg p-3 text-sm text-slate-400 mr-8">
+              <div className="bg-white border border-border rounded-lg p-3 text-sm text-zetaGray mr-8">
                 Thinking...
               </div>
             )}
@@ -269,13 +279,13 @@ export default function AIStrategistPanel({ selectedArchetype }) {
                 if (e.key === "Enter") sendMessage();
               }}
               placeholder="Ask about messaging, audiences, issues..."
-              className="flex-1 bg-[#071322] border border-border rounded-lg px-3 py-2 text-sm outline-none"
+              className="flex-1 bg-white border border-border rounded-lg px-3 py-2 text-sm outline-none"
             />
 
             <button
               onClick={() => sendMessage()}
               disabled={loading}
-              className="bg-purple hover:bg-fuchsia-600 rounded-lg px-3 disabled:opacity-50"
+              className="bg-zetaBlue hover:bg-fuchsia-600 rounded-lg px-3 disabled:opacity-50"
             >
               <Send size={16} />
             </button>

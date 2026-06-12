@@ -6,12 +6,12 @@ const ETHNICITY_COLORS = {
   Other: "#14b8a6",
 };
 
-function SmallBar({ label, value, color = "bg-purple" }) {
+function SmallBar({ label, value, color = "bg-zetaBlue" }) {
   return (
     <div className="grid grid-cols-[95px_1fr_42px] items-center gap-3 text-sm">
-      <span className="text-slate-300">{label}</span>
+      <span className="text-[#334155]">{label}</span>
 
-      <div className="h-2.5 bg-[#13243a] rounded-full overflow-hidden">
+      <div className="h-2.5 bg-[#d3d3d3] rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full ${color}`}
           style={{
@@ -21,7 +21,7 @@ function SmallBar({ label, value, color = "bg-purple" }) {
         />
       </div>
 
-      <span className="text-slate-300 text-right">{value}%</span>
+      <span className="text-[#334155] text-right">{value}%</span>
     </div>
   );
 }
@@ -50,7 +50,7 @@ function DonutChart({ data }) {
       className="w-36 h-36 rounded-full relative shrink-0"
       style={{ background: `conic-gradient(${gradient})` }}
     >
-      <div className="absolute inset-[24px] rounded-full bg-[#071321]" />
+      <div className="absolute inset-[24px] rounded-full bg-[#ffffff]" />
     </div>
   );
 }
@@ -62,7 +62,7 @@ export default function WhoTheyAreCard({ profile }) {
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-8 border-b border-border pb-6">
         <div>
-          <h3 className="text-sm font-black mb-4 text-slate-200">AGE</h3>
+          <h3 className="text-sm font-bold text-zetaDark mb-4">AGE</h3>
 
           <div className="space-y-3">
             {profile.ageDistribution.map(([label, value]) => (
@@ -72,7 +72,7 @@ export default function WhoTheyAreCard({ profile }) {
         </div>
 
         <div className="border-l border-border pl-8">
-          <h3 className="text-sm font-black mb-4 text-slate-200">INCOME</h3>
+          <h3 className="text-sm font-bold text-zetaDark mb-4">INCOME</h3>
 
           <div className="space-y-3">
             {profile.incomeDistribution.map(([label, value]) => (
@@ -83,7 +83,7 @@ export default function WhoTheyAreCard({ profile }) {
       </div>
 
       <div>
-        <h3 className="text-sm font-black mb-4 text-slate-200">ETHNICITY</h3>
+        <h3 className="text-sm font-bold text-zetaDark mb-4">ETHNICITY</h3>
 
         <div className="grid grid-cols-[220px_1fr] gap-10 items-center max-w-[500px]">
                 <DonutChart data={profile.ethnicityMix} />
@@ -101,9 +101,9 @@ export default function WhoTheyAreCard({ profile }) {
                   }}
                 />
 
-                <span className="text-slate-300">{label}</span>
+                <span className="text-[#334155]">{label}</span>
 
-                <span className="text-slate-300 text-right">{value}%</span>
+                <span className="text-[#334155] text-right">{value}%</span>
               </div>
             ))}
           </div>

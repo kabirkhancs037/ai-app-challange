@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Network, Users, Scale, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import zetaLogo from "../assets/zeta-logo.png";
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(
@@ -40,23 +41,23 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside
-      className={`h-screen border-r border-border bg-[#06101d] p-5 flex flex-col sticky top-0 overflow-hidden transition-all duration-300 ${
+   <aside
+      className={`h-screen border-r border-[#1c2b3a] zeta-sidebar p-5 flex flex-col sticky top-0 overflow-hidden transition-all duration-300 ${
         collapsed ? "w-[86px]" : "w-[250px]"
       }`}
     >
-      <div className="flex items-center justify-between mb-10">
+      <div
+          className={`flex items-center justify-between mr-20 ${
+            collapsed ? "mb-20" : "mb-10"
+          }`}
+        >
        {!collapsed && (
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple via-blue to-orange glow-purple shrink-0" />
-
-            <div className="font-bold text-sm leading-tight">
-              AMERICA'S
-              <br />
-              BEHAVIORAL
-              <br />
-              POLITICAL MAP
-            </div>
+          <div className="flex items-center">
+            <img
+              src={zetaLogo}
+              alt="Zeta Political Dashboard"
+              className="h-16 w-auto object-contain"
+            />
           </div>
         )}
 
@@ -64,7 +65,7 @@ export default function Sidebar() {
             onClick={toggleSidebar}
             className={`absolute top-5 ${
               collapsed ? "left-1/2 -translate-x-1/2" : "right-5"
-            } w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-[#10233b]`}
+            } w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-[#10233b] mt-3`}
           >
           {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
         </button>
@@ -81,8 +82,8 @@ export default function Sidebar() {
                 collapsed ? "justify-center" : ""
               } ${
                 isActive
-                  ? "bg-[#10233b] text-white border-l-2 border-purple"
-                  : "text-slate-400 hover:text-white"
+                  ? "zeta-active-nav"
+                  : "text-slate-400 hover:text-white hover:bg-[#071322]"
               }`
             }
           >
@@ -93,8 +94,8 @@ export default function Sidebar() {
       </nav>
 
       {!collapsed && (
-        <div className="card p-4 mt-auto text-xs text-slate-400 leading-relaxed">
-          <div className="font-bold text-slate-300 mb-3">ABOUT THIS PAGE</div>
+        <div className="card p-4 mt-auto text-xs text-zetaGray leading-relaxed">
+          <div className="font-bold text-[#334155] mb-3">ABOUT THIS PAGE</div>
           Explore voter archetypes, behavior patterns, and political leanings.
         </div>
       )}

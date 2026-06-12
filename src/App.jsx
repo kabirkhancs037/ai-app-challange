@@ -8,7 +8,7 @@ export default function App() {
   return (
     <div className="h-screen bg-bg text-slate-100 flex overflow-hidden">
       <Sidebar />
-      <main className="flex-1 p-5 overflow-y-auto">
+      <main className="flex-1 bg-[#f6f8fb] text-[#1c2430] p-6 overflow-x-hidden">
         <Routes>
           <Route path="/" element={<Navigate to="/map" />} />
           <Route path="/map" element={<BehavioralMap />} />

@@ -119,7 +119,7 @@ export default function USAMapCard({ profile }) {
     <div className="relative h-full overflow-hidden">
       <button
         onClick={() => setShowGeoPopup(true)}
-        className="absolute right-0 top-0 z-20 w-9 h-9 rounded-lg border border-border flex items-center justify-center hover:bg-[#10233b]"
+        className="absolute right-0 top-0 z-20 w-9 h-9 rounded-lg border border-border flex items-center justify-center hover:bg-[#E3EEFF]"
         title="View metro and urbanicity details"
       >
         <MoreHorizontal size={18} />
@@ -156,12 +156,12 @@ export default function USAMapCard({ profile }) {
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  fill="#06182d"
+                  fill="#C1DAFF"
                   stroke="#1b5ba6"
                   strokeWidth={0.65}
                   style={{
                     default: { outline: "none" },
-                    hover: { outline: "none", fill: "#08213d" },
+                    hover: { outline: "none", fill: "#E3EEFF" },
                     pressed: { outline: "none" },
                   }}
                 />
@@ -211,7 +211,7 @@ export default function USAMapCard({ profile }) {
               }}
             />
 
-            <div className="flex justify-between text-[11px] text-slate-400 mt-1 w-48">
+            <div className="flex justify-between text-[11px] text-zetaGray mt-1 w-48">
               <span>High</span>
               <span>Low</span>
             </div>
@@ -224,7 +224,7 @@ export default function USAMapCard({ profile }) {
     onClick={() => setShowGeoPopup(false)}
   >
     <div
-      className="w-full max-w-[560px] rounded-2xl border border-border bg-[#071322] p-5 shadow-2xl"
+      className="w-full max-w-[560px] rounded-2xl border border-border bg-white p-5 shadow-2xl"
       onClick={(event) => event.stopPropagation()}
     >
       <div className="flex items-center justify-between mb-5">
@@ -232,7 +232,7 @@ export default function USAMapCard({ profile }) {
 
         <button
           onClick={() => setShowGeoPopup(false)}
-          className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-[#10233b]"
+          className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-[#E3EEFF]"
           title="Close"
         >
           <X size={16} />
@@ -240,7 +240,7 @@ export default function USAMapCard({ profile }) {
       </div>
 
       <div className="grid grid-cols-1 gap-4">
-        <div className="rounded-xl border border-border bg-[#020916]/50 p-4">
+        <div className="rounded-xl border border-border bg-[#F6FAFF]/50 p-4">
           <h4 className="text-sm font-black mb-4">TOP METRO AREAS</h4>
 
           <div className="space-y-4">
@@ -250,16 +250,16 @@ export default function USAMapCard({ profile }) {
                 className="flex items-center justify-between gap-3"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="w-7 h-7 rounded-full bg-purple flex items-center justify-center font-black shrink-0">
+                  <span className="w-7 h-7 rounded-full bg-zetaSilver flex items-center justify-center font-black shrink-0">
                     {index + 1}
                   </span>
 
-                  <span className="font-semibold text-slate-200 text-sm">
+                  <span className="font-semibold text-zetaDark text-sm">
                     {name}
                   </span>
                 </div>
 
-                <span className="text-slate-300 text-sm shrink-0">
+                <span className="text-[#334155] text-sm shrink-0">
                   {presence}
                 </span>
               </div>
@@ -267,7 +267,7 @@ export default function USAMapCard({ profile }) {
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-[#020916]/50 p-4">
+        <div className="rounded-xl border border-border bg-[#F6FAFF]/50 p-4">
           <h4 className="text-sm font-black mb-4">URBANICITY</h4>
 
           <div className="space-y-3">
@@ -276,16 +276,16 @@ export default function USAMapCard({ profile }) {
                 key={label}
                 className="grid grid-cols-[90px_1fr_45px] items-center gap-3 text-sm"
               >
-                <span className="text-slate-200">{label}</span>
+                <span className="text-zetaDark">{label}</span>
 
-                <div className="h-2.5 bg-[#13243a] rounded-full overflow-hidden">
+                <div className="h-2.5 bg-[#d3d3d3] rounded-full overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-purple"
+                    className="h-full rounded-full bg-zetaBlue"
                     style={{ width: `${value}%` }}
                   />
                 </div>
 
-                <span className="text-right text-slate-200">{value}%</span>
+                <span className="text-right text-zetaDark">{value}%</span>
               </div>
             ))}
           </div>

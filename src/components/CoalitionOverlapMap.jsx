@@ -73,19 +73,19 @@ export default function CoalitionOverlapMap({ profile }) {
   );
 
   return (
-    <div className="relative h-[430px] overflow-y-auto pr-2 pt-2 pb-10 coalition-scrollbar">
-      <div className="mb-5 rounded-2xl border border-purple/40 bg-purple/10 p-4 text-center">
-        <div className="text-xs uppercase tracking-wide text-slate-400">
+    <div className="relative h-full overflow-y-auto pr-2 pt-2 coalition-scrollbar">
+      <div className="mb-5 rounded-2xl border border-purple/40 bg-zetaBlue/10 p-4 text-center">
+        <div className="text-xs uppercase tracking-wide text-[#244FA1]">
           Anchor Archetype
         </div>
 
-        <div className="mt-2 text-lg font-black leading-tight text-white">
+        <div className="mt-2 text-lg font-black leading-tight text-[#244FA1]">
           {profile.name}
         </div>
       </div>
 
       <div className="relative pl-4">
-        <div className="absolute left-[30px] top-2 bottom-2 w-px bg-purple/30" />
+        <div className="absolute left-[35px] top-2 bottom-2 w-px bg-[#507CA8]/30" />
 
         <div className="space-y-4">
           {overlaps.map(([name, value]) => {
@@ -108,7 +108,7 @@ export default function CoalitionOverlapMap({ profile }) {
                   <Icon size={18} className="text-white" strokeWidth={2.3} />
                 </div>
 
-                <div className="rounded-xl border border-border bg-[#071322]/70 p-3">
+                <div className="rounded-xl border border-border bg-white/70 p-3">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div
@@ -118,7 +118,7 @@ export default function CoalitionOverlapMap({ profile }) {
                         {name}
                       </div>
 
-                      <div className="mt-1 text-[11px] text-slate-400">
+                      <div className="mt-1 text-[11px] text-zetaGray">
                         {strength} overlap
                       </div>
                     </div>

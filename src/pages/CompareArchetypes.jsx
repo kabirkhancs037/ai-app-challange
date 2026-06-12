@@ -65,7 +65,7 @@ export default function CompareArchetypes() {
       </div>
 
       <h1 className="text-4xl font-black">COMPARE ARCHETYPES</h1>
-      <p className="text-slate-400 mb-5">
+      <p className="text-zetaGray mb-5">
         Select two archetypes to compare side-by-side.
       </p>
 
@@ -91,7 +91,7 @@ export default function CompareArchetypes() {
                 <h3 className="font-bold mb-5">KEY TAKEAWAYS</h3>
 
                 <Takeaway
-                  color="bg-purple"
+                  color="bg-zetaBlue"
                   text={`${left.name} has a ${
                     leftProfile?.politicalLean || left.lean
                   } profile.`}
@@ -115,7 +115,7 @@ export default function CompareArchetypes() {
           <div className="card p-5 mt-5 grid grid-cols-5 gap-4 text-sm">
             <div>
               <div className="font-bold">OVERLAP SNAPSHOT</div>
-              <div className="text-slate-400">
+              <div className="text-zetaGray">
                 Where these two archetypes intersect
               </div>
             </div>
@@ -137,7 +137,7 @@ export default function CompareArchetypes() {
       ) : (
         <div className="card p-8 text-center">
           <h2 className="text-2xl font-black">Select 2 archetypes to compare</h2>
-          <p className="text-slate-400 mt-2">
+          <p className="text-zetaGray mt-2">
             Choose any two archetypes to begin comparison.
           </p>
         </div>
@@ -156,7 +156,7 @@ export default function CompareArchetypes() {
 }
 
 function CompareColumn({ item, profile, color, onRemove }) {
-  const barColor = color === "blue" ? "bg-blue" : "bg-purple";
+  const barColor = color === "blue" ? "bg-blue" : "bg-zetaBlue";
 
   return (
     <div className="space-y-4">
@@ -176,7 +176,7 @@ function CompareColumn({ item, profile, color, onRemove }) {
 
           <h2 className="text-2xl font-bold">{item.name}</h2>
 
-          <p className="text-sm text-slate-400 mt-1">{item.description}</p>
+          <p className="text-sm text-zetaGray mt-1">{item.description}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mt-6 text-sm">
@@ -229,7 +229,7 @@ function Metric({ label, value }) {
 
 function Takeaway({ color, text }) {
   return (
-    <div className="flex gap-4 mb-5 text-sm text-slate-300">
+    <div className="flex gap-4 mb-5 text-sm text-[#334155]">
       <div className={`w-10 h-10 rounded-full ${color} shrink-0`} />
       <p>{text}</p>
     </div>

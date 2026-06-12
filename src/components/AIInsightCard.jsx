@@ -77,7 +77,7 @@ useEffect(() => {
             <h3 className="font-black text-lg">AI ARCHETYPE INSIGHT</h3>
           </div>
 
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-zetaGray mt-1">
             Click to generate a strategy summary
           </p>
         </div>
@@ -98,7 +98,7 @@ useEffect(() => {
         <button
           onClick={generateInsight}
           disabled={!selectedArchetype || loading}
-          className="w-full rounded-xl border border-purple/50 px-4 py-3 text-sm font-bold text-purple hover:bg-purple/10 transition disabled:opacity-50"
+          className="w-full rounded-xl border border-zetaBlue/50 px-4 py-3 text-sm font-bold text-zetaBlue hover:bg-zetaBlue/10 transition disabled:opacity-50"
         >
           Load AI Insight
         </button>
@@ -110,7 +110,7 @@ useEffect(() => {
           <div className="h-3 bg-[#142239] rounded w-5/6 animate-pulse" />
         </div>
       ) : (
-        <div className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">
+        <div className="text-sm text-[#334155] whitespace-pre-wrap leading-relaxed">
           {insight}
         </div>
       )}

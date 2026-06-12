@@ -18,10 +18,10 @@ export default function HowTheyLiveCard({ profile }) {
             className="grid grid-cols-[1fr_120px_45px] gap-3 items-center text-sm"
           >
             <div className="min-w-0 wrapTheWord">
-              <span className="text-slate-100 font-medium text-[12px]">{title}</span>
+              <span className="text-zetaDark font-medium text-[12px]">{title}</span>
             </div>
 
-            <div className="h-2.5 bg-[#13243a] rounded-full overflow-hidden">
+            <div className="h-2.5 bg-[#d3d3d3] rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full ${
                   positive ? "bg-green" : "bg-red"

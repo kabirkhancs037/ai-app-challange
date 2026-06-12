@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --zeta-bg: #f6f8fb;
+  --zeta-surface: #ffffff;
+  --zeta-sidebar: #020b15;
+  --zeta-sidebar-soft: #071322;
+  --zeta-border: #d9e1ec;
+
+  --zeta-blue: #1877f2;
+  --zeta-cyan: #00bcd4;
+  --zeta-purple: #8b3ff6;
+  --zeta-pink: #e71e73;
+  --zeta-orange: #ff8a00;
+
+  --zeta-text: #1c2430;
+  --zeta-muted: #7b8794;
+}
+
+body {
+  background: #f6f8fb;
+  color: #1f2933;
+}
+
 body {
   margin: 0;
   background: #050b16;
@@ -14,10 +36,13 @@ body {
 }
 
 .card {
-  background: linear-gradient(180deg, rgba(11,23,40,.95), rgba(5,13,24,.95));
-  border: 1px solid #1b2b43;
-  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #d9e1ec;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  color: #1f2933;
 }
+
 
 .glow-purple {
   box-shadow: 0 0 25px rgba(139, 63, 246, .75);
@@ -44,6 +69,43 @@ body {
 }
 
 .coalition-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(139, 63, 246, 0.5);
+  background: #E3EEFF;
   border-radius: 999px;
+}
+
+.zeta-gradient {
+  background: linear-gradient(
+    120deg,
+    #1877f2 0%,
+    #8b3ff6 35%,
+    #e71e73 65%,
+    #ff8a00 100%
+  );
+}
+
+.zeta-hero {
+  background:
+    radial-gradient(circle at 20% 40%, rgba(24, 119, 242, 0.45), transparent 35%),
+    linear-gradient(120deg, #1877f2 0%, #8b3ff6 35%, #e71e73 65%, #ff8a00 100%);
+}
+
+.zeta-sidebar {
+  background:
+    radial-gradient(circle at 20% 40%, rgba(154, 114, 189, 0.25), transparent 35%),
+    linear-gradient(180deg, #020b15 0%, #06101d 100%);
+}
+
+.zeta-active-nav {
+  background: #0091ff;
+  color: white;
+}
+
+.zeta-gradient {
+  background: linear-gradient(
+    120deg,
+    #0091ff 0%,
+    #9a72bd 35%,
+    #ed55c2 65%,
+    #f5a623 100%
+  );
 }

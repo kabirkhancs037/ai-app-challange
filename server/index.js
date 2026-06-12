@@ -17,7 +17,19 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://ai-app-challange.vercel.app",
+    ],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+app.options("*", cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -135,6 +147,61 @@ app.post("/api/strategist-chat", async (req, res) => {
     });
   }
 });
+
+
+
+app.post("/api/surprising-insight", async (req, res) => {
+  try {
+    const { archetype, profile } = req.body;
+
+    if (!archetype || !profile) {
+      return res.status(400).json({
+        error: "Missing archetype or profile data.",
+      });
+    }
+
+    const prompt = `
+You are a senior political data strategist.
+
+Generate ONE surprising, memorable insight about this archetype.
+
+Use only the data provided below.
+Do not invent numbers.
+Focus on something unexpected, counterintuitive, or strategically useful.
+
+Write in 1-2 sentences.
+Return only the insight text.
+
+Archetype:
+${JSON.stringify(archetype, null, 2)}
+
+Profile:
+${JSON.stringify(profile, null, 2)}
+`;
+
+    let insight;
+
+    if (AI_PROVIDER === "openai") {
+      insight = await askOpenAI(prompt);
+    } else {
+      insight = await askOllama(prompt);
+    }
+
+    res.json({
+      provider: AI_PROVIDER,
+      insight,
+    });
+  } catch (error) {
+    console.error("Surprising insight error:");
+    console.error(error);
+
+    res.status(500).json({
+      error: error.message || "Failed to generate surprising insight.",
+    });
+  }
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`AI server running on http://localhost:${PORT}`);

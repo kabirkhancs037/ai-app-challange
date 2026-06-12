@@ -1,4 +1,6 @@
 import { Link, useParams } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { archetypes } from "../data/mockData";
 import { getArchetypeProfileById } from "../data/archetypeProfiles";
 import {
@@ -14,10 +16,16 @@ import PoliticalCompass from "../components/PoliticalCompass";
 import WhoTheyAreCard from "../components/WhoTheyAreCard";
 import HowTheyLiveCard from "../components/HowTheyLiveCard";
 import CoalitionOverlapMap from "../components/CoalitionOverlapMap";
+import { ArrowRightLeft, Users } from "lucide-react";
+import CompareArchetypeModal from "../components/CompareArchetypeModal";
 
 export default function ArchetypeExplorer() {
+  const navigate = useNavigate();
+  const [showCompareModal, setShowCompareModal] = useState(false);
   const { id } = useParams();
   const savedId = localStorage.getItem("selectedArchetypeId");
+  const [surpriseInsight, setSurpriseInsight] = useState("");
+  const [surpriseLoading, setSurpriseLoading] = useState(false);
 
   const archetypeId = id || savedId || "suburban-family-first";
 
@@ -30,7 +38,7 @@ export default function ArchetypeExplorer() {
     return (
       <div className="card p-8">
         <h1 className="text-2xl font-black">Archetype profile not found</h1>
-        <p className="text-slate-400 mt-2">
+        <p className="text-zetaGray mt-2">
           Please go back to Behavioral Map and select another archetype.
         </p>
       </div>
@@ -102,6 +110,43 @@ export default function ArchetypeExplorer() {
     },
   ];
 
+  async function generateSurprisingInsight() {
+  if (surpriseLoading) return;
+
+  setSurpriseLoading(true);
+  setSurpriseInsight("");
+
+  try {
+    const apiBaseUrl = import.meta.env.VITE_API_URL || "";
+
+    const res = await fetch(`${apiBaseUrl}/api/surprising-insight`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        archetype: item,
+        profile,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to generate insight");
+    }
+
+    setSurpriseInsight(data.insight);
+  } catch (error) {
+    console.error(error);
+    setSurpriseInsight(
+      "AI could not generate a surprising insight right now. Please try again."
+    );
+  } finally {
+    setSurpriseLoading(false);
+  }
+}
+
   return (
     <div>
       <div className="flex justify-between mb-5">
@@ -110,32 +155,61 @@ export default function ArchetypeExplorer() {
         </Link>
 
         <div className="flex gap-3">
-          <Link to="/compare" className="card px-5 py-2 text-sm">
-            Compare Archetypes
-          </Link>
+          <button
+              onClick={() => setShowCompareModal(true)}
+              className="
+                flex items-center gap-3
+                px-6 py-1.5
+                rounded-md
+                border border-[#D9E1EC]
+                bg-white
+                text-[#1F2937]
+                font-sm
+                transition-all duration-200
+                hover:bg-[#0091FF]
+                hover:text-white
+              "
+            >
+              <ArrowRightLeft size={18} />
+              <span>Compare Archetypes</span>
+            </button>
           <button className="card px-5 py-2 text-sm">Download Profile</button>
         </div>
       </div>
 
       <section className="grid grid-cols-[220px_1fr] gap-5 mb-5">
-        <div className="rounded-xl overflow-hidden bg-gradient-to-br from-orange to-blue h-36" />
+        <div className="relative h-40 rounded-xl overflow-hidden">
+            <img
+              src="/images/archetype-hero.jpg"
+              alt="Audience Intelligence"
+              className="w-full h-full object-cover"
+            />
+
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(0,145,255,.25), rgba(154,114,189,.18), rgba(237,85,194,.14))",
+              }}
+            />
+          </div>
 
         <div>
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-purple flex items-center justify-center text-2xl">
-              👪
+            <div className="w-14 h-14 rounded-full bg-zetaBlue flex items-center justify-center text-2xl">
+              <Users className="w-8 h-8 text-white" />
             </div>
 
             <div>
               <h1 className="text-4xl font-black uppercase">{item.name}</h1>
 
-              <span className="bg-purple/60 px-3 py-1 rounded text-xs">
+              <span className="bg-zetaDark px-3 py-1 rounded text-xs text-white">
                 {item.lean}
               </span>
             </div>
           </div>
 
-          <p className="text-slate-300 max-w-xl mt-4">{item.description}</p>
+          <p className="text-[#334155] max-w-xl mt-4">{item.description}</p>
         </div>
       </section>
 
@@ -145,11 +219,46 @@ export default function ArchetypeExplorer() {
         <StatBlock label="Political Lean" value={profile.politicalLean} />
         <StatBlock label="Persuadability" value={profile.persuadability} green />
         <div className="p-6">
-          <div className="text-xs text-slate-400 uppercase">Homeownership</div>
+          <div className="text-xs text-zetaGray uppercase">Homeownership</div>
           <div className="text-2xl font-black mt-2 text-green">
             {profile.homeownershipRate}%
           </div>
         </div>
+      </div>
+
+      <div className="card p-5 mb-5 border-l-4 border-zetaPink bg-white">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-black text-[#1F2937]">
+              What Surprised Me?
+            </h3>
+            <p className="text-sm text-[#49565D] mt-1">
+              AI-generated unexpected findings using this archetype’s real profile data.
+            </p>
+          </div>
+
+          <button
+            onClick={generateSurprisingInsight}
+            disabled={surpriseLoading}
+            className="px-5 py-3 rounded-xl bg-zetaBlue text-white font-bold text-sm hover:bg-zetaBlueDark1 transition disabled:opacity-60"
+          >
+            {surpriseLoading
+              ? "Finding Insight..."
+              : "Show Surprising Insights"}
+          </button>
+        </div>
+
+        {surpriseInsight && (
+          <div className="mt-4 rounded-xl bg-[#F6FAFF] border border-[#C1DAFF] p-4">
+            <div className="text-xs uppercase tracking-wide text-zetaBlue font-black mb-2">
+              AI Insight
+            </div>
+
+            <p className="text-[#1F2937] font-semibold leading-relaxed">
+              {surpriseInsight}
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-4 gap-5 items-stretch">
@@ -198,7 +307,7 @@ export default function ArchetypeExplorer() {
             <div>
               <h3 className="text-sm font-bold mb-3">
                 ISSUE AFFINITY{" "}
-                <span className="text-slate-400">(Probability)</span>
+                <span className="text-zetaGray">(Probability)</span>
               </h3>
 
               <div className="space-y-4">
@@ -207,16 +316,16 @@ export default function ArchetypeExplorer() {
                     key={issue}
                     className="grid grid-cols-[1fr_140px_50px] items-center gap-4"
                   >
-                    <div className="text-slate-200 text-sm">{issue}</div>
+                    <div className="text-zetaDark text-sm">{issue}</div>
 
-                    <div className="h-2.5 bg-[#13243a] rounded-full overflow-hidden">
+                    <div className="h-2.5 bg-[#d3d3d3] rounded-full overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-purple"
+                        className="h-full rounded-full bg-zetaBlue"
                         style={{ width: `${value}%` }}
                       />
                     </div>
 
-                    <div className="text-right text-slate-200 font-bold text-sm">
+                    <div className="text-right text-zetaDark font-bold text-sm">
                       {value}%
                     </div>
                   </div>
@@ -238,12 +347,12 @@ export default function ArchetypeExplorer() {
                   data={radar}
                   margin={{ top: 20, right: 45, bottom: 20, left: 45 }}
                 >
-                  <PolarGrid stroke="#243954" />
+                  <PolarGrid stroke="#050761" />
 
                   <PolarAngleAxis
                     dataKey="name"
                     tick={{
-                      fill: "#9aa8bd",
+                      fill: "#000",
                       fontSize: 9,
                       fontWeight: 600,
                     }}
@@ -251,16 +360,16 @@ export default function ArchetypeExplorer() {
 
                   <Radar
                     dataKey="value"
-                    fill="#8b3ff6"
-                    stroke="#b46aff"
+                    fill="#6CA2F3"
+                    stroke="#9AC3FF"
                     fillOpacity={0.5}
                   />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
 
-            <div className="mt-2 rounded-2xl border border-border bg-[#071322]/70 p-4">
-              <h3 className="text-xs font-black text-slate-300 mb-3">
+            <div className="mt-2 rounded-2xl border border-border bg-white/70 p-4">
+              <h3 className="text-xs font-black text-[#334155] mb-3">
                 MOST PERSUADABLE ON
               </h3>
 
@@ -268,7 +377,7 @@ export default function ArchetypeExplorer() {
                 {(profile.persuadabilityTopics || []).slice(0, 5).map((topic) => (
                   <span
                     key={topic}
-                    className="rounded-lg bg-purple/30 border border-purple/40 px-3 py-2 text-xs font-semibold text-slate-100"
+                    className="rounded-lg bg-zetaBlue/30 px-3 py-2 text-xs font-semibold text-[#112681]"
                   >
                     {topic}
                   </span>
@@ -287,12 +396,22 @@ export default function ArchetypeExplorer() {
         </Panel>
       </div>
 
+      
+
       <AIStrategistPanel
         selectedArchetype={{
           ...item,
           profile,
         }}
       />
+
+      <CompareArchetypeModal
+                  open={showCompareModal}
+                  onClose={() => setShowCompareModal(false)}
+                  onCompare={(selectedIds) => {
+                    navigate(`/compare?left=${selectedIds[0]}&right=${selectedIds[1]}`);
+                  }}
+                />
     </div>
   );
 }
@@ -300,7 +419,7 @@ export default function ArchetypeExplorer() {
 function StatBlock({ label, value, sub, green = false }) {
   return (
     <div className="p-6 border-r border-border">
-      <div className="text-xs text-slate-400 uppercase">{label}</div>
+      <div className="text-xs text-zetaGray uppercase">{label}</div>
       <div className={`text-2xl font-black mt-2 ${green ? "text-green" : ""}`}>
         {value}
       </div>
@@ -313,7 +432,7 @@ function Panel({ title, subtitle, children, className = "" }) {
   return (
     <section className={`card p-6 ${className || "min-h-[360px]"}`}>
       <h2 className="font-black text-lg">{title}</h2>
-      <p className="text-xs text-slate-400 mb-5">{subtitle}</p>
+      <p className="text-xs text-zetaGray mb-5">{subtitle}</p>
       {children}
     </section>
   );
