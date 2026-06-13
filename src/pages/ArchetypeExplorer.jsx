@@ -192,9 +192,12 @@ Search internet if needed to provide the very interesting insight.
       <section className="grid grid-cols-[220px_1fr] gap-5 mb-5">
         <div className="relative h-40 rounded-xl overflow-hidden">
             <img
-              src="/images/archetype-hero.jpg"
-              alt="Audience Intelligence"
+              src={`/images/archetypes/${item.id}.jpg`}
+              alt={item.name}
               className="w-full h-full object-cover"
+              onError={(event) => {
+                event.currentTarget.src = "/images/archetype-hero.jpg";
+              }}
             />
 
             <div
@@ -228,7 +231,7 @@ Search internet if needed to provide the very interesting insight.
       <div className="card grid grid-cols-5 gap-0 overflow-hidden mb-5">
         <StatBlock label="Population" value={profile.population} sub="Adult Population" />
         <StatBlock label="Median Income" value={profile.medianIncome} />
-        <StatBlock label="Political Lean" value={profile.politicalLean} />
+        <StatBlock label="POLITICAL ALIGNMENT " value={profile.politicalLean} />
         <StatBlock label="Persuadability" value={profile.persuadability} green />
         <div className="p-6">
           <div className="text-xs text-zetaGray uppercase">Homeownership</div>
@@ -328,8 +331,7 @@ Search internet if needed to provide the very interesting insight.
 
             <div>
               <h3 className="text-sm font-bold mb-3">
-                ISSUE AFFINITY{" "}
-                <span className="text-zetaGray">(Probability)</span>
+                TOP ISSUES 
               </h3>
 
               <div className="space-y-4">
@@ -392,7 +394,7 @@ Search internet if needed to provide the very interesting insight.
 
             <div className="mt-2 rounded-2xl border border-border bg-white/70 p-4">
               <h3 className="text-xs font-black text-[#334155] mb-3">
-                MOST PERSUADABLE ON
+               KEY MOTIVATORS 
               </h3>
 
               <div className="flex flex-wrap gap-2">

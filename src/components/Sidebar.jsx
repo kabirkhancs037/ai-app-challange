@@ -94,9 +94,9 @@ export default function Sidebar() {
       </nav>
 
       {!collapsed && (
-        <div className="card p-4 mt-auto text-xs text-zetaGray leading-relaxed">
-          <div className="font-bold text-[#334155] mb-3">ABOUT THIS PAGE</div>
-          Explore voter archetypes, behavior patterns, and political leanings.
+        <div className="customAboutThisCardClass p-4 mt-auto text-xs text-zetaGray leading-relaxed">
+          <div className="font-bold text-[#fff] mb-3">ABOUT THIS PAGE</div>
+          Explore the behavioral archetypes shaping the American electorate. Discover how different audiences live, spend, and engage with political issues.
         </div>
       )}
     </aside>

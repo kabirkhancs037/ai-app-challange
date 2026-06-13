@@ -242,7 +242,7 @@ export default function AIStrategistPanel({ selectedArchetype }) {
                 key={prompt}
                 onClick={() => sendMessage(prompt)}
                 disabled={loading}
-                className="text-xs text-left rounded-lg border border-border bg-white hover:bg-[#10233b] p-2 disabled:opacity-50"
+                className="text-xs text-left rounded-lg border border-border bg-white hover:bg-[#d3d3d3] p-2 disabled:opacity-50"
               >
                 <Sparkles size={12} className="inline mr-1" />
                 {prompt}
@@ -285,9 +285,9 @@ export default function AIStrategistPanel({ selectedArchetype }) {
             <button
               onClick={() => sendMessage()}
               disabled={loading}
-              className="bg-zetaBlue hover:bg-fuchsia-600 rounded-lg px-3 disabled:opacity-50"
+              className="bg-zetaBlue hover:bg-[#6CA2F3] rounded-lg px-3 disabled:opacity-50"
             >
-              <Send size={16} />
+              <Send size={16} className="text-white"/>
             </button>
           </div>
         </div>

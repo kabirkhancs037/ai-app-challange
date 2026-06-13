@@ -14,6 +14,7 @@ import {
   getFallbackMultiplier,
 } from "../data/filterModel";
 import { Users, ArrowRightLeft } from "lucide-react";
+import { UsersRound } from "lucide-react";
 
 
 function parsePopulation(value) {
@@ -69,6 +70,31 @@ function getFilteredPopulation(archetype, profile, filters) {
 
   return Math.min(basePopulation, basePopulation * share);
 }
+
+
+    function getPopulationRank(archetypeId) {
+      const ranked = archetypes
+        .map((a) => {
+          const profile = getArchetypeProfileById(a.id);
+
+          return {
+            id: a.id,
+            population: Number(
+              String(profile?.population || a.population).replace("M", "")
+            ),
+          };
+        })
+        .sort((a, b) => b.population - a.population);
+
+      const rank = ranked.findIndex((item) => item.id === archetypeId);
+
+      return rank + 1;
+    }
+
+
+    function getTopIssue(profile) {
+      return profile?.politicalProfile?.[0]?.[0] || "Unknown";
+    }
 
 export default function BehavioralMap() {
   const savedId = localStorage.getItem("selectedArchetypeId");
@@ -162,7 +188,7 @@ const clusterPopulationById = Object.fromEntries(
             AMERICA&apos;S BEHAVIORAL POLITICAL MAP
           </h1>
           <p className="text-zetaGray mt-2">
-            How America Lives, Behaves &amp; Leans Politically in 2026
+            Explore the voter archetypes shaping the 2026 Midterm Elections
           </p>
         </div>
 
@@ -280,15 +306,29 @@ const clusterPopulationById = Object.fromEntries(
             <StatCard label="Total Adult Population" color="text-zetaDark" value={totalAdultPopulation} />
             <StatCard label="Archetypes" color="text-zetaDark" value="15" />
             <StatCard
-              label="Avg. Persuadability"
+              label="PERSUADABLE POPULATION"
               value={avgPersuadability}
               color="text-green"
             />
             <StatCard
-              label="Highly Competed Voters"
+              label="SWING ELECTORATE"
               value={highlyCompetedVoters}
               color="text-zetaPurple"
             />
+          </div>
+
+           <div className="mb-4 rounded-lg border border-[#C1DAFF] bg-gradient-to-r from-[#F6FAFF] via-white to-[#F6FAFF] px-5 py-2 shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="h-8 w-8 rounded-md bg-zetaBlue flex items-center justify-center">
+                <UsersRound size={22} className="text-white" />
+              </div>
+
+              <div>
+                <div className="text-sm font-black text-zetaBlue">
+                  Behavioral clusters based on demographics, visitation, transactions, and mobility patterns.
+                </div>
+              </div>
+            </div>
           </div>
 
          <ClusterMap
@@ -300,7 +340,7 @@ const clusterPopulationById = Object.fromEntries(
         <aside className="space-y-4">
           <div className="card p-5">
             <h3 className="font-bold text-[#334155] mb-4">
-              SELECTED ARCHETYPE
+               ARCHETYPE PROFILE
             </h3>
 
             <div className="flex gap-4 items-center mb-4">
@@ -325,7 +365,7 @@ const clusterPopulationById = Object.fromEntries(
 
             <div className="text-sm space-y-3">
               <div className="flex justify-between gap-4">
-                <span className="text-zetaGray">Population</span>
+                <span className="text-zetaDark">Population</span>
                 <span>
                   {selectedProfile?.population || selectedArchetype.population}
                   {selectedArchetype.percent
@@ -335,22 +375,42 @@ const clusterPopulationById = Object.fromEntries(
               </div>
 
               <div className="flex justify-between gap-4">
-                <span className="text-zetaGray">Political Lean</span>
+                <span className="text-zetaDark">
+                  Population Rank
+                </span>
+
+                <span className="font-medium">
+                  #{getPopulationRank(selectedArchetype.id)} of {archetypes.length}
+                </span>
+              </div>
+
+              <div className="flex justify-between gap-4">
+                <span className="text-zetaDark">Political Lean</span>
                 <span className="text-fuchsia-400">
                   {selectedProfile?.politicalLean || selectedArchetype.lean || "Competitive"}
                 </span>
               </div>
 
               <div className="flex justify-between gap-4">
-                <span className="text-zetaGray">Persuadability</span>
+                <span className="text-zetaDark">Persuadability</span>
                 <span className="text-green">
                   {selectedProfile?.persuadability || selectedArchetype.persuadability || "High"}
                 </span>
               </div>
 
               <div className="flex justify-between gap-4">
-                <span className="text-zetaGray">Median Income</span>
+                <span className="text-zetaDark">Median Income</span>
                 <span>{selectedProfile?.medianIncome || selectedArchetype.income || "$82K"}</span>
+              </div>
+
+              <div className="flex justify-between gap-4">
+                <span className="text-zetaDark">
+                  Top Issue
+                </span>
+
+                <span className="font-medium text-zetaBlue">
+                  {getTopIssue(selectedProfile)}
+                </span>
               </div>
             </div>
           </div>

@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { X, Search, Scale, Check } from "lucide-react";
 import { archetypes } from "../data/mockData";
 import { Users } from "lucide-react";
-import { color } from "framer-motion";
 
 export default function CompareArchetypeModal({
   open,
@@ -67,7 +66,7 @@ const [selectedIds, setSelectedIds] = useState(
               <div>
                 <h2 className="text-2xl font-black">Compare Archetypes</h2>
                 <p className="text-sm text-zetaGray mt-1">
-                  Select up to 2 archetypes to compare side-by-side.
+                  Select up to 2 audience archetypes for side-by-side analysis.
                 </p>
               </div>
             </div>
@@ -115,8 +114,8 @@ const [selectedIds, setSelectedIds] = useState(
                         }`}
                     >
                         {selected && (
-                        <span className="absolute right-3 top-3 w-7 h-7 rounded-full bg-zetaBlue flex items-center justify-center">
-                            <Check size={16} className="text-white" />
+                        <span className="absolute right-3 top-3 w-5 h-5 rounded-full bg-zetaBlue flex items-center justify-center">
+                            <Check size={12} className="text-white" />
                         </span>
                         )}
 

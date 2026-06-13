@@ -2,7 +2,7 @@ export const archetypeProfiles = [
   {
     id: "digital-hustlers",
     name: "Digital Hustlers",
-    population: "21.9M",
+    population: "14.6M",
     politicalLean: "Lean Republican",
     medianIncome: "$74K",
     persuadability: "Very High",
@@ -118,7 +118,7 @@ export const archetypeProfiles = [
   {
     id: "suburban-family-first",
     name: "Suburban Family First",
-    population: "35.6M",
+    population: "23M",
     politicalLean: "Competitive / Lean Mixed",
     medianIncome: "$128K",
     persuadability: "High",
@@ -234,7 +234,7 @@ export const archetypeProfiles = [
   {
     id: "eco-conscious-progressives",
     name: "Eco-Conscious Progressives",
-    population: "24.7M",
+    population: "17.0M",
     politicalLean: "Lean Democrat",
     medianIncome: "$142K",
     persuadability: "Medium",
@@ -350,7 +350,7 @@ export const archetypeProfiles = [
   {
     id: "economic-survivalists",
     name: "Economic Survivalists",
-    population: "31.2M",
+    population: "21.0M",
     politicalLean: "Competitive / Lean Republican",
     medianIncome: "$58K",
     persuadability: "Very High",
@@ -459,7 +459,7 @@ export const archetypeProfiles = [
   {
     id: "cultural-traditionalists",
     name: "Cultural Traditionalists",
-    population: "28.4M",
+    population: "19.1M",
     politicalLean: "Lean Republican",
     medianIncome: "$92K",
     persuadability: "Medium-Low",
@@ -568,7 +568,7 @@ export const archetypeProfiles = [
   {
     id: "asian-affluent-networkers",
     name: "Asian Affluent Networkers",
-    population: "18.6M",
+    population: "13.1M",
     politicalLean: "Lean Democrat",
     medianIncome: "$168K",
     persuadability: "Medium",
@@ -685,7 +685,7 @@ export const archetypeProfiles = [
   {
     id: "exurban-explorers",
     name: "Exurban Explorers",
-    population: "22.5M",
+    population: "15.2M",
     politicalLean: "Lean Republican",
     medianIncome: "$104K",
     persuadability: "Medium",
@@ -794,7 +794,7 @@ export const archetypeProfiles = [
   {
     id: "heartland-anchors",
     name: "Heartland Anchors",
-    population: "26.1M",
+    population: "17.4M",
     politicalLean: "Lean Republican",
     medianIncome: "$81K",
     persuadability: "Medium-Low",
@@ -903,7 +903,7 @@ export const archetypeProfiles = [
   {
     id: "latino-aspirational-families",
     name: "Latino Aspirational Families",
-    population: "27.8M",
+    population: "19.2M",
     politicalLean: "Competitive",
     medianIncome: "$86K",
     persuadability: "High",
@@ -1021,7 +1021,7 @@ export const archetypeProfiles = [
   {
     id: "multicultural-digital-natives",
     name: "Multicultural Digital Natives",
-    population: "23.4M",
+    population: "15.5M",
     politicalLean: "Competitive / Lean Democrat",
     medianIncome: "$79K",
     persuadability: "Very High",
@@ -1130,7 +1130,7 @@ export const archetypeProfiles = [
   {
     id: "rooted-ethnic-enclaves",
     name: "Rooted Ethnic Enclaves",
-    population: "19.7M",
+    population: "12.9M",
     politicalLean: "Competitive",
     medianIncome: "$72K",
     persuadability: "Medium-High",
@@ -1251,7 +1251,7 @@ export const archetypeProfiles = [
   {
     id: "wellness-maximizers",
     name: "Wellness Maximizers",
-    population: "16.8M",
+    population: "11.9M",
     politicalLean: "Lean Democrat",
     medianIncome: "$136K",
     persuadability: "Medium",
@@ -1360,7 +1360,7 @@ export const archetypeProfiles = [
   {
     id: "aspiring-achievers",
     name: "Aspiring Achievers",
-    population: "17.9M",
+    population: "11.6M",
     politicalLean: "Competitive / Lean Democrat",
     medianIncome: "$118K",
     persuadability: "High",
@@ -1469,7 +1469,7 @@ export const archetypeProfiles = [
   {
     id: "senior-security-voters",
     name: "Senior Security Voters",
-    population: "20.3M",
+    population: "13.3M",
     politicalLean: "Lean Republican",
     medianIncome: "$76K",
     persuadability: "Medium-Low",
@@ -1578,7 +1578,7 @@ export const archetypeProfiles = [
   {
     id: "urban-progressives",
     name: "Urban Progressives",
-    population: "25.8M",
+    population: "17M",
     politicalLean: "Strong Democrat",
     medianIncome: "$124K",
     persuadability: "Medium",

@@ -109,3 +109,29 @@ body {
     #f5a623 100%
   );
 }
+
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e5e7eb;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3472ce;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #244fa1;
+}
+
+.customAboutThisCardClass{
+    background: #000000;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 8px;
+}

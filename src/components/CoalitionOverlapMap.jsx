@@ -128,7 +128,7 @@ export default function CoalitionOverlapMap({ profile }) {
                     </div>
                   </div>
 
-                  <div className="mt-3 h-1.5 rounded-full bg-[#13243a] overflow-hidden">
+                  <div className="mt-3 h-1.5 rounded-full bg-[#d3d3d3] overflow-hidden">
                     <div
                       className="h-full rounded-full"
                       style={{

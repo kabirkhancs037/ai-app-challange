@@ -68,10 +68,6 @@ export default function CompareArchetypes() {
             <ArrowRightLeft size={16} />
             Change Archetypes
           </button>
-
-          <button className="card px-5 py-2 text-sm hover:bg-[#F6FAFF]">
-            Share
-          </button>
         </div>
       </div>
 
@@ -90,10 +86,6 @@ export default function CompareArchetypes() {
               onRemove={() => removeArchetype("left")}
             />
 
-            <div className="absolute left-[calc(50%-185px)] top-[72px] z-20 w-12 h-12 rounded-full bg-white border border-border shadow-lg flex items-center justify-center font-black text-[#1F2937]">
-              VS
-            </div>
-
             <CompareColumn
               item={right}
               profile={rightProfile}
@@ -102,7 +94,7 @@ export default function CompareArchetypes() {
             />
 
             <aside className="space-y-4">
-              <div className="card p-5">
+              <div className="card p-5 min-h-[280px]">
                 <h3 className="font-black mb-5">KEY TAKEAWAYS</h3>
 
                 <Takeaway
@@ -142,7 +134,7 @@ export default function CompareArchetypes() {
                 />
               </div>
 
-              <div className="card p-5">
+              <div className="card p-5 min-h-[220px]">
                 <h3 className="font-black mb-4">STRATEGIC READ</h3>
                 <p className="text-sm text-[#334155] leading-relaxed">
                   Use this comparison to identify where messaging can bridge
@@ -200,11 +192,15 @@ export default function CompareArchetypes() {
 
 function CompareColumn({ item, profile, color, onRemove }) {
   const barColor = color === "blue" ? "bg-blue" : "bg-zetaBlue";
+  const heroCardClass = "card p-5 h-[330px] relative overflow-hidden";
+  const sectionClass = "card p-5 h-[300px] flex flex-col overflow-hidden";
+  const summaryCardClass = "card p-5 h-[160px] overflow-hidden";
+  const summaryCardClass_op = "card p-5 h-[260px] overflow-hidden";
   const score = getPersuadabilityScore(profile?.persuadability || item.persuadability);
 
   return (
     <div className="space-y-4">
-      <div className="card p-5 relative" style={{ borderColor: item.color }}>
+      <div className={heroCardClass} style={{ borderColor: item.color }}>
         <button
           onClick={onRemove}
           className="absolute right-4 top-4 w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-[#F6FAFF]"
@@ -221,9 +217,22 @@ function CompareColumn({ item, profile, color, onRemove }) {
             Archetype
           </div>
 
-          <h2 className="text-2xl font-black">{item.name}</h2>
+          <div className="flex items-center justify-between gap-4 mt-1">
+            <h2 className="text-l font-black leading-tight">
+              {item.name}
+            </h2>
 
-          <p className="text-sm text-zetaGray mt-1">{item.description}</p>
+            <button
+              className="shrink-0 rounded-lg bg-zetaBlue text-white px-4 py-2 text-xs font-bold hover:bg-zetaBlueDark1 transition"
+              onClick={() => alert(`Activate Audience: ${item.name}`)}
+            >
+              Activate Audience
+            </button>
+          </div>
+
+          <p className="text-sm text-zetaGray mt-2 line-clamp-3">
+            {item.description}
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mt-6 text-sm">
@@ -234,22 +243,38 @@ function CompareColumn({ item, profile, color, onRemove }) {
         </div>
       </div>
 
-      <div className="card p-5">
+      <div className={sectionClass}>
         <h3 className="font-black mb-4">DEMOGRAPHICS</h3>
         <MiniBars data={profile?.ageDistribution || []} color={barColor} />
       </div>
 
-      <div className="card p-5">
-        <h3 className="font-black mb-4">POLITICAL PROFILE</h3>
-        <MiniBars data={profile?.politicalProfile || []} color={barColor} />
+      <div className={sectionClass}>
+        <h3 className="font-black mb-4 shrink-0">
+          POLITICAL PROFILE
+        </h3>
+
+        <div className="flex-1 min-h-0 overflow-y-auto pr-3">
+          <MiniBars
+            data={profile?.politicalProfile || []}
+            color={barColor}
+          />
+        </div>
       </div>
 
-      <div className="card p-5">
-        <h3 className="font-black mb-4">TOP BEHAVIORAL FEATURES</h3>
-        <MiniBars data={profile?.behavioralDNA?.overIndex || []} color={barColor} />
+      <div className={sectionClass}>
+        <h3 className="font-black mb-4 shrink-0">
+          TOP BEHAVIORAL FEATURES
+        </h3>
+
+        <div className="flex-1 min-h-0 overflow-y-auto pr-3">
+          <MiniBars
+            data={profile?.behavioralDNA?.overIndex || []}
+            color={barColor}
+          />
+        </div>
       </div>
 
-      <div className="card p-5">
+      <div className={summaryCardClass}>
         <h3 className="font-black mb-4">ECONOMIC PROFILE</h3>
 
         <div className="grid grid-cols-3 gap-3 text-sm">
@@ -268,7 +293,7 @@ function CompareColumn({ item, profile, color, onRemove }) {
         </div>
       </div>
 
-      <div className="card p-5">
+      <div className={summaryCardClass_op}>
         <h3 className="font-black mb-4">OVERALL PERSUADABILITY</h3>
 
         <div className="flex items-end gap-3">

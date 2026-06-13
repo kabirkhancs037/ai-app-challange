@@ -78,7 +78,7 @@ useEffect(() => {
           </div>
 
           <p className="text-sm text-zetaGray mt-1">
-            Click to generate a strategy summary
+            Discover what drives this audience
           </p>
         </div>
 

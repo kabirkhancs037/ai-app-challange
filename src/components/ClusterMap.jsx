@@ -381,7 +381,7 @@ export default function ClusterMap({ populationById = {}, onSelectArchetype }) {
           }}
           className="flex-1 flex items-center justify-center text-white"
         >
-          32%
+          34% 
         </div>
 
           <div
@@ -391,7 +391,7 @@ export default function ClusterMap({ populationById = {}, onSelectArchetype }) {
           }}
           className="flex-1 flex items-center justify-center text-white"
         >
-          26%
+          28% 
         </div>
 
           <div
@@ -401,7 +401,7 @@ export default function ClusterMap({ populationById = {}, onSelectArchetype }) {
             }}
             className="flex-1 flex items-center justify-center text-white"
           >
-            26%
+            38% 
           </div>
         </div>
 
