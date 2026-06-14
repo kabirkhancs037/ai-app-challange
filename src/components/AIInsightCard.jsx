@@ -86,7 +86,7 @@ useEffect(() => {
           <button
             onClick={generateInsight}
             disabled={loading}
-            className="w-9 h-9 rounded-lg border border-border flex items-center justify-center hover:bg-[#10233b] disabled:opacity-50"
+            className="w-9 h-9 rounded-lg border border-border flex items-center justify-center hover:bg-[#d3d3d3] disabled:opacity-50"
             title="Regenerate insight"
           >
             <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
@@ -104,10 +104,10 @@ useEffect(() => {
         </button>
       ) : loading ? (
         <div className="space-y-3">
-          <div className="h-3 bg-[#142239] rounded w-5/6 animate-pulse" />
-          <div className="h-3 bg-[#142239] rounded w-full animate-pulse" />
-          <div className="h-3 bg-[#142239] rounded w-4/6 animate-pulse" />
-          <div className="h-3 bg-[#142239] rounded w-5/6 animate-pulse" />
+          <div className="h-3 bg-[#d3d3d3] rounded w-5/6 animate-pulse" />
+          <div className="h-3 bg-[#d3d3d3] rounded w-full animate-pulse" />
+          <div className="h-3 bg-[#d3d3d3] rounded w-4/6 animate-pulse" />
+          <div className="h-3 bg-[#d3d3d3] rounded w-5/6 animate-pulse" />
         </div>
       ) : (
         <div className="text-sm text-[#334155] whitespace-pre-wrap leading-relaxed">

@@ -185,7 +185,7 @@ Search internet if needed to provide the very interesting insight.
               <ArrowRightLeft size={18} />
               <span>Compare Archetypes</span>
             </button>
-          <button className="card px-5 py-2 text-sm">Download Profile</button>
+          
         </div>
       </div>
 
@@ -261,34 +261,47 @@ Search internet if needed to provide the very interesting insight.
             >
               {surpriseLoading
                 ? "Analyzing..."
-                : "Surprising Insight"}
+                : "Show Surprising Insights"}
             </button>
           </div>
         </div>
 
         <div className="p-6">
-          {!surpriseInsight ? (
-            <div className="text-[#49565D] text-base">
-              Click <strong>Surprising Insight</strong> to uncover an unexpected finding
-              about this audience.
-            </div>
-          ) : (
-            <>
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-zetaBlue to-zetaPurple text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4">
-                ✨ Unexpected Finding
-              </div>
+            {surpriseLoading ? (
+              <div>
+                <div className="text-xs font-black uppercase tracking-wider text-zetaBlue mb-4">
+                  AI analyzing audience...
+                </div>
 
-              <p className="text-l leading-relaxed font-normal text-[#1F2937]">
-                {surpriseInsight}
-              </p>
-            </>
-          )}
-        </div>
+                <div className="space-y-3 animate-pulse">
+                  <div className="h-5 rounded bg-[#DCE7F8] w-full" />
+                  <div className="h-5 rounded bg-[#DCE7F8] w-[92%]" />
+                  <div className="h-5 rounded bg-[#DCE7F8] w-[85%]" />
+                  <div className="h-5 rounded bg-[#DCE7F8] w-[70%]" />
+                </div>
+              </div>
+            ) : surpriseInsight ? (
+              <>
+                <div className="inline-flex items-center gap-2 bg-zetaBlueLight4 text-zetaBlue px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4">
+                  ✨ Unexpected Finding
+                </div>
+
+                <p className="text-l leading-relaxed text-[#1F2937]">
+                  {surpriseInsight}
+                </p>
+              </>
+            ) : (
+              <div className="text-[#49565D] text-base">
+                Click <strong>Surprising Insight</strong> to uncover an unexpected finding
+                about this audience.
+              </div>
+            )}
+          </div>
       </div>
 
       <div className="grid grid-cols-4 gap-5 items-stretch">
         <Panel
-          title="1 WHO THEY ARE"
+          title="1. WHO THEY ARE"
           subtitle="Demographic Composition"
           className="col-span-2 h-[560px] overflow-hidden"
         >
@@ -296,7 +309,7 @@ Search internet if needed to provide the very interesting insight.
         </Panel>
 
         <Panel
-          title="2 HOW THEY LIVE"
+          title="2. HOW THEY LIVE"
           subtitle="Behavioral DNA"
           className="h-[560px] overflow-hidden"
         >
@@ -306,7 +319,7 @@ Search internet if needed to provide the very interesting insight.
         </Panel>
 
         <Panel
-          title="3 WHERE THEY LIVE"
+          title="3. WHERE THEY LIVE"
           subtitle="Geographic Concentration"
           className="h-[560px] overflow-hidden"
         >
@@ -314,7 +327,7 @@ Search internet if needed to provide the very interesting insight.
         </Panel>
 
         <Panel
-          title="4 POLITICAL PROFILE"
+          title="4. POLITICAL PROFILE"
           subtitle="Inferred from Behavior"
           className="col-span-2 h-full overflow-hidden"
         >
@@ -360,7 +373,7 @@ Search internet if needed to provide the very interesting insight.
         </Panel>
 
         <Panel
-          title="5 PERSUADABILITY"
+          title="5. PERSUADABILITY"
           subtitle="Why They Can Move"
           className="h-full overflow-hidden"
         >
@@ -412,7 +425,7 @@ Search internet if needed to provide the very interesting insight.
         </Panel>
 
         <Panel
-          title="6 COALITION OVERLAP"
+          title="6. COALITION OVERLAP"
           subtitle="Who They Align With"
           className="h-full overflow-hidden"
         >

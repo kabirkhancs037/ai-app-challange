@@ -47,6 +47,33 @@ const [selectedIds, setSelectedIds] = useState(
     onClose?.();
   }
 
+
+    function getLeanBadgeClass(lean = "") {
+    const value = lean.toLowerCase();
+
+    if (value.includes("strong democrat")) {
+        return "bg-[#244FA1] text-white";
+    }
+
+    if (value.includes("lean democrat")) {
+        return "bg-[#0091FF] text-white";
+    }
+
+    if (value.includes("competitive")) {
+        return "bg-[#9A72BD] text-white";
+    }
+
+    if (value.includes("strong republican")) {
+        return "bg-[#D0021B] text-white";
+    }
+
+    if (value.includes("lean republican")) {
+        return "bg-[#F5A623] text-white";
+    }
+
+    return "bg-[#49565D] text-white";
+    }
+
   return (
     <div
       className="fixed inset-0 z-[9999] bg-[#020916]/80 backdrop-blur-sm flex items-center justify-center p-5"
@@ -134,7 +161,11 @@ const [selectedIds, setSelectedIds] = useState(
                         </div>
                         </div>
 
-                        <div className="mt-4 inline-block rounded bg-[#244FA1] text-white px-2 py-1 text-[11px]">
+                       <div
+                        className={`mt-4 inline-block rounded px-2 py-1 text-[11px] font-bold ${getLeanBadgeClass(
+                            item.lean || "Competitive"
+                        )}`}
+                        >
                         {item.lean || "Competitive"}
                         </div>
 

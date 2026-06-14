@@ -18,14 +18,22 @@ export default function CompareArchetypes() {
   const navigate = useNavigate();
 
   const [showCompareModal, setShowCompareModal] = useState(false);
+  
+  const [comparisonInsight, setComparisonInsight] = useState("");
+  const [comparisonLoading, setComparisonLoading] = useState(false);
 
-  const leftId = searchParams.get("left");
-  const rightId = searchParams.get("right");
+  const savedCompareIds = JSON.parse(
+    localStorage.getItem("compareArchetypeIds") || "[]"
+  );
+
+  const leftId = searchParams.get("left") || savedCompareIds[0];
+  const rightId = searchParams.get("right") || savedCompareIds[1];
 
   const selectedIds = useMemo(
     () => [leftId, rightId].filter(Boolean),
     [leftId, rightId]
   );
+  
 
   const left = archetypes.find((item) => item.id === leftId);
   const right = archetypes.find((item) => item.id === rightId);
@@ -36,22 +44,104 @@ export default function CompareArchetypes() {
   const needsSelection = !left || !right;
   const modalOpen = showCompareModal || needsSelection;
 
-  function handleCompare(ids) {
-    navigate(`/compare?left=${ids[0]}&right=${ids[1]}`);
-    setShowCompareModal(false);
-  }
+    function handleCompare(ids) {
+      localStorage.setItem(
+        "compareArchetypeIds",
+        JSON.stringify(ids)
+      );
 
-  function removeArchetype(side) {
-    const remainingId = side === "left" ? right?.id : left?.id;
-
-    if (remainingId) {
-      navigate(`/compare?left=${remainingId}`);
-    } else {
-      navigate("/compare");
+      setComparisonInsight("");
+      navigate(`/compare?left=${ids[0]}&right=${ids[1]}`);
+      setShowCompareModal(false);
     }
 
-    setShowCompareModal(true);
-  }
+    function removeArchetype(side) {
+      setComparisonInsight("");
+
+      const remainingId = side === "left" ? right?.id : left?.id;
+
+      if (remainingId) {
+        localStorage.setItem(
+          "compareArchetypeIds",
+          JSON.stringify([remainingId])
+        );
+
+        navigate(`/compare?left=${remainingId}`);
+      } else {
+        localStorage.removeItem("compareArchetypeIds");
+        navigate("/compare");
+      }
+
+      setShowCompareModal(true);
+    }
+
+
+    async function generateComparisonInsight() {
+      if (comparisonLoading || !left || !right) return;
+
+      setComparisonLoading(true);
+      setComparisonInsight("");
+
+      try {
+        const apiBaseUrl = import.meta.env.VITE_API_URL || "";
+
+        const res = await fetch(`${apiBaseUrl}/api/strategist-chat`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: `
+    Generate ONE surprising and strategically useful comparison insight between these two archetypes.
+
+    Use only the real data provided below.
+    Do not invent numbers.
+    Focus on what is unexpected, useful for campaign strategy, or important for audience activation.
+    Write 2-3 concise sentences.
+    Return only the insight text.
+
+    LEFT ARCHETYPE:
+    ${JSON.stringify(
+      {
+        ...left,
+        profile: leftProfile,
+      },
+      null,
+      2
+    )}
+
+    RIGHT ARCHETYPE:
+    ${JSON.stringify(
+      {
+        ...right,
+        profile: rightProfile,
+      },
+      null,
+      2
+    )}
+    `,
+            selectedArchetype: null,
+            chatHistory: [],
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to generate comparison insight");
+        }
+
+        setComparisonInsight(data.reply);
+      } catch (error) {
+        console.error(error);
+        setComparisonInsight(
+          "AI could not generate a comparison insight right now. Please try again."
+        );
+      } finally {
+        setComparisonLoading(false);
+      }
+    }
+
 
   return (
     <div>
@@ -62,12 +152,23 @@ export default function CompareArchetypes() {
 
         <div className="flex gap-3">
           <button
-            onClick={() => setShowCompareModal(true)}
-            className="card px-5 py-2 text-sm flex items-center gap-2 hover:bg-[#F6FAFF]"
-          >
-            <ArrowRightLeft size={16} />
-            Change Archetypes
-          </button>
+              onClick={() => setShowCompareModal(true)}
+              className="
+                flex items-center gap-3
+                px-6 py-1.5
+                rounded-md
+                border border-[#D9E1EC]
+                bg-white
+                text-[#1F2937]
+                font-sm
+                transition-all duration-200
+                hover:bg-[#0091FF]
+                hover:text-white
+              "
+            >
+              <ArrowRightLeft size={18} />
+              <span>Change Archetypes</span>
+            </button>
         </div>
       </div>
 
@@ -134,13 +235,45 @@ export default function CompareArchetypes() {
                 />
               </div>
 
-              <div className="card p-5 min-h-[220px]">
-                <h3 className="font-black mb-4">STRATEGIC READ</h3>
-                <p className="text-sm text-[#334155] leading-relaxed">
-                  Use this comparison to identify where messaging can bridge
-                  both archetypes and where persuasion strategies should split
-                  by economics, lifestyle, and political priority.
-                </p>
+              <div className="card p-5 border-l-4 border-zetaBlue bg-white">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-xs uppercase tracking-[0.18em] font-black text-zetaBlue">
+                      AI Comparison Insight
+                    </div>
+
+                    <h3 className="font-black text-lg mt-1">
+                      What Stands Out?
+                    </h3>
+                  </div>
+
+                  <button
+                    onClick={generateComparisonInsight}
+                    disabled={comparisonLoading}
+                    className="shrink-0 rounded-lg bg-zetaBlue px-4 py-2 text-xs font-bold text-white hover:bg-zetaBlueDark1 transition disabled:opacity-60"
+                  >
+                    {comparisonLoading ? "Analyzing..." : "Generate"}
+                  </button>
+                </div>
+
+                <div className="mt-4 rounded-xl border border-[#C1DAFF] bg-[#F6FAFF] p-4 min-h-[120px]">
+                  {comparisonLoading ? (
+                    <div className="space-y-3 animate-pulse">
+                      <div className="h-4 rounded bg-[#DCE7F8] w-full" />
+                      <div className="h-4 rounded bg-[#DCE7F8] w-[92%]" />
+                      <div className="h-4 rounded bg-[#DCE7F8] w-[85%]" />
+                      <div className="h-4 rounded bg-[#DCE7F8] w-[65%]" />
+                    </div>
+                  ) : comparisonInsight ? (
+                    <p className="text-sm leading-relaxed font-semibold text-[#1F2937]">
+                      {comparisonInsight}
+                    </p>
+                  ) : (
+                    <p className="text-sm leading-relaxed text-zetaGray">
+                      Generate an AI-powered insight using the real profile data from both selected archetypes.
+                    </p>
+                  )}
+                </div>
               </div>
             </aside>
           </div>
@@ -248,31 +381,17 @@ function CompareColumn({ item, profile, color, onRemove }) {
         <MiniBars data={profile?.ageDistribution || []} color={barColor} />
       </div>
 
-      <div className={sectionClass}>
-        <h3 className="font-black mb-4 shrink-0">
-          POLITICAL PROFILE
-        </h3>
+      <BehaviorSignalGrid
+        title="POLITICAL PROFILE"
+        data={profile?.politicalProfile || []}
+        color={item.color}
+      />
 
-        <div className="flex-1 min-h-0 overflow-y-auto pr-3">
-          <MiniBars
-            data={profile?.politicalProfile || []}
-            color={barColor}
-          />
-        </div>
-      </div>
-
-      <div className={sectionClass}>
-        <h3 className="font-black mb-4 shrink-0">
-          TOP BEHAVIORAL FEATURES
-        </h3>
-
-        <div className="flex-1 min-h-0 overflow-y-auto pr-3">
-          <MiniBars
-            data={profile?.behavioralDNA?.overIndex || []}
-            color={barColor}
-          />
-        </div>
-      </div>
+      <BehaviorSignalGrid
+        title="TOP BEHAVIORAL SIGNALS"
+        data={profile?.behavioralDNA?.overIndex || []}
+        color={item.color}
+      />
 
       <div className={summaryCardClass}>
         <h3 className="font-black mb-4">ECONOMIC PROFILE</h3>
@@ -358,6 +477,46 @@ function getSharedIssue(leftProfile, rightProfile) {
 
   return `${leftTop || "Unknown"} / ${rightTop || "Unknown"}`;
 }
+
+
+    function BehaviorSignalGrid({ title, data = [], color = "#3472CE" }) {
+      return (
+        <div className="card p-5 h-[300px] flex flex-col overflow-hidden">
+          <h3 className="font-black mb-4 shrink-0">{title}</h3>
+
+          <div className="flex-1 min-h-0 overflow-y-auto pr-2">
+            <div className="grid grid-cols-2 gap-3">
+              {data.map(([label, value], index) => (
+                <div
+                  key={label}
+                  className="rounded-xl border border-border bg-[#F6FAFF] p-4 min-h-[105px]"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span
+                      className="text-xs font-black rounded-full px-2 py-1 text-white"
+                      style={{ backgroundColor: color }}
+                    >
+                      #{index + 1}
+                    </span>
+
+                    <span
+                      className="text-xl font-black"
+                      style={{ color }}
+                    >
+                      +{value}
+                    </span>
+                  </div>
+
+                  <div className="mt-3 text-sm font-bold leading-tight text-[#1F2937]">
+                    {label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
 
 function Metric({ label, value }) {
   return (

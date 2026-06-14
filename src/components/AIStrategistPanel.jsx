@@ -43,7 +43,7 @@ export default function AIStrategistPanel({ selectedArchetype }) {
     {
       role: "assistant",
       content:
-        "Hi, I’m your AI Strategist. Select an archetype or ask me what audience to target.",
+        "Need a strategy? Ask me how to reach, persuade, or activate this audience.",
     },
   ]);
 
@@ -197,7 +197,7 @@ export default function AIStrategistPanel({ selectedArchetype }) {
           <div>
             <h3 className="font-bold text-sm">AI Strategist</h3>
             <p className="text-xs text-zetaGray">
-              Campaign insights powered by AI
+              Behavioral Intelligence Powered by AI
             </p>
           </div>
         </div>
