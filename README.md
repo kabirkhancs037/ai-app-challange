@@ -1,4 +1,4 @@
-# Zeta Political Dashboard
+# AMERICA'S BEHAVIORAL POLITICAL MAP
 AI-powered audience intelligence platform for exploring, comparing, and analyzing behavioral voter archetypes across the United States.
 
 ## Features
