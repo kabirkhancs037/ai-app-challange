@@ -94,16 +94,16 @@ npm run dev
 ### Deployment
 
 Frontend:
-Vercel
-Static React build via Vite
+* Vercel
+* Static React build via Vite
 
 Backend:
-Node.js / Express API
-REST-based AI endpoints
+* Node.js / Express API
+* REST-based AI endpoints
 
 Example API endpoints:
-POST /api/strategist-chat
-POST /api/surprising-insight
+* POST /api/strategist-chat
+* POST /api/surprising-insight
 
 
 ### Environment Variables
