@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import Sidebar from "./components/Sidebar";
 import BehavioralMap from "./pages/BehavioralMap";
 import ArchetypeExplorer from "./pages/ArchetypeExplorer";
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/compare" element={<CompareArchetypes />} />
         </Routes>
       </main>
+      <Analytics />
     </div>
   );
 }
